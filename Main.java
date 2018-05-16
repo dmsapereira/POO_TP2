@@ -101,6 +101,8 @@ public class Main {
             itera.next();
             while (itera.hasNext()) {
                 System.out.print(" " + itera.next());
+                if(itera.hasNext())
+                    System.out.print(";");
             }
             System.out.println(".");
         }
@@ -113,6 +115,8 @@ public class Main {
             itera.next();
             while (itera.hasNext()) {
                 System.out.print(" " + itera.next());
+                if(itera.hasNext())
+                    System.out.print(";");
             }
             System.out.println(".");
         }
