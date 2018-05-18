@@ -1,18 +1,22 @@
 package User;
-import Iterable.*;
+import java.util.*;
 
 public interface Account {
+
+    String getName();
 
     String getEmail();
 
     String getPassword();
 
-    Array<Device> getDevices();
+    Set<Device> getDevices();
 
-    Array<Profile> getProfiles();
+    Set<Profile> getProfiles();
 
     Plan getPlan();
 
     void changePlan(Plan newPlan);
+
+    int getMaxDevices();
 
 }

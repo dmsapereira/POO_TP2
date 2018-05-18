@@ -1,13 +1,14 @@
 package Media;
-import Iterable.Array;
+import java.util.Set;
 
-public class AbsMedia implements Media, Named {
+
+public class AbsMedia implements Media {
     private String name,directorName,genre;
     private int ageRating,debutDate;
-    private Array<String> cast;
+    private Set<String> cast;
 
 
-    public AbsMedia(String name, String directorName, int ageRating, int debutDate, String genre, Array<String> cast ){
+    public AbsMedia(String name, String directorName, int ageRating, int debutDate, String genre, Set<String> cast ){
         this.name=name;
         this.directorName=directorName;
         this.ageRating=ageRating;
@@ -42,7 +43,7 @@ public class AbsMedia implements Media, Named {
     }
 
     @Override
-    public Array<String> getCast() {
+    public Set<String> getCast() {
         return cast;
     }
 

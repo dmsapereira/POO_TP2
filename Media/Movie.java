@@ -1,5 +1,5 @@
 package Media;
 
-public interface Movie extends Media,Named {
+public interface Movie extends Media {
     int getDuration();
 }

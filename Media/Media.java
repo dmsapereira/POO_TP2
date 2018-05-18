@@ -1,7 +1,9 @@
 package Media;
-import Iterable.Array;
+import java.util.Set;
 
 public interface Media {
+
+    String getName();
 
     String getDirector();
 
@@ -11,6 +13,6 @@ public interface Media {
 
     String getGenre();
 
-    Array<String> getCast();
+    Set<String> getCast();
 
 }

@@ -1,11 +1,11 @@
 package Media;
 
-import Iterable.Array;
+import java.util.Set;
 
 public class ShowClass extends AbsMedia implements Show {
     private int numSeasons, numEpisodes;
 
-    public ShowClass(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, Array<String> cast) {
+    public ShowClass(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, Set<String> cast) {
         super(name, directorName, ageRating, debutDate, genre, cast);
         this.numSeasons = numSeasons;
         this.numEpisodes = numEpisodes;

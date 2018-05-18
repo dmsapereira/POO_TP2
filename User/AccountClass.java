@@ -1,23 +1,24 @@
 package User;
 
-import Media.Named;
-import Iterable.*;
+import java.util.*;
 
-public class AccountClass implements Account, Named {
+public class AccountClass implements Account {
 
     private Plan plan;
     private String email, password, name;
-    private Array<Device> devices;
-    private Array<Profile> profiles;
+    private int maxDevices;
+    private Set<Device> devices;
+    private Set<Profile> profiles;
 
     public AccountClass(String name, String email, String password, Device device) {
         plan = Plan.BASIC;
-        devices = new ArrayClass<Device>(plan.getDeviceNum());
-        profiles = new ArrayClass<Profile>(plan.getProfileNum());
-        devices.insertLast(device);
+        devices = new LinkedHashSet<>(plan.getDeviceNum());
+        profiles = new LinkedHashSet<>(plan.getProfileNum());
+        devices.add(device);
         this.name = name;
         this.email = email;
         this.password = password;
+        maxDevices= plan.deviceNum;
     }
 
 
@@ -32,7 +33,7 @@ public class AccountClass implements Account, Named {
     }
 
     @Override
-    public Array<Device> getDevices() {
+    public Set<Device> getDevices() {
         return devices;
     }
 
@@ -42,7 +43,7 @@ public class AccountClass implements Account, Named {
     }
 
     @Override
-    public Array<Profile> getProfiles() {
+    public Set<Profile> getProfiles() {
         return profiles;
     }
 
@@ -53,16 +54,26 @@ public class AccountClass implements Account, Named {
 
     @Override
     public void changePlan(Plan plan) {
-        Array<Device> newDevices = new ArrayClass<Device>(plan.getDeviceNum());
-        Array<Profile> newProfiles = new ArrayClass<Profile>(plan.getProfileNum());
-        for (int i = 0; i < this.plan.profileNum; i++)
-            newProfiles.insertLast(profiles.get(i));
-        for (int i = 0; i < this.plan.deviceNum; i++)
-            newDevices.insertLast(devices.get(i));
-        this.plan=plan;
-        devices=newDevices;
-        profiles=newProfiles;
-
+            maxDevices = plan.deviceNum;
+            this.plan = plan;
     }
 
+    @Override
+    public int getMaxDevices() {
+        return maxDevices;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountClass that = (AccountClass) o;
+        return Objects.equals(email, that.email);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(email);
+    }
 }

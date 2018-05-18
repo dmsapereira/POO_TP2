@@ -1,10 +1,10 @@
 package User;
-import Iterable.*;
+import java.util.*;
 import Media.*;
 
 public interface Profile {
 
-    Array<Show> getWatched();
+    Set<Show> getWatched();
 
     void watch(Show show);
 

@@ -2,9 +2,7 @@ package User;
 
 public interface Device {
 
-    void login();
+    String getName();
 
-    void logout();
 
-    boolean isLoggedIn();
 }

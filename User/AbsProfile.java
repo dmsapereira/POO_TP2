@@ -1,18 +1,18 @@
 package User;
 import Media.Show;
-import Iterable.*;
+import java.util.*;
 
 public class AbsProfile implements Profile {
-    private Array<Show> watchedShows;
+    private Set<Show> watchedShows;
     private String name;
 
     public AbsProfile(String name){
-        watchedShows=new ArrayClass<Show>();
+        watchedShows=new LinkedHashSet<>();
         this.name=name;
     }
 
     @Override
-    public Array<Show> getWatched() {
+    public Set<Show> getWatched() {
         return null;
     }
 
