@@ -4,6 +4,8 @@ import java.util.*;
 import Exceptions.*;
 import Media.*;
 import User.Account;
+import User.Device;
+import User.Plan;
 
 public class Main {
     private static final String FORMAT_SHOW = "%s; %s; %d; %d; %d+; %d; %s";
@@ -27,18 +29,59 @@ public class Main {
         Command option;
         do {
             option = getCommand(in);
-
-            if (option.equals(Command.UPLOAD))
-                upload(in, system);
-            else if (option.equals(Command.EXIT))
-                break;
-
-            else
-                System.out.println("Unknown command.");
-
+            switch (option) {
+                case UPLOAD:
+                    upload(in, system);
+                    break;
+                case REGISTER:
+                    register(in, system);
+                    break;
+                case LOGIN:
+                    login(in, system);
+                    break;
+                case DISCONNECT:
+                    disconnect(system);
+                    break;
+                case LOGOUT:
+                    logout(system);
+                    break;
+                case MEMBERSHIP:
+                    //TODO
+                    break;
+                case PROFILE:
+                    //TODO
+                    break;
+                case SELECT:
+                    //TODO
+                    break;
+                case WATCH:
+                    //TODO
+                    break;
+                case RATE:
+                    //TODO
+                    break;
+                case INFOACCOUNT:
+                    //TODO
+                    break;
+                case SEARCHBYGENRE:
+                    //TODO
+                    break;
+                case SEARCHBYNAME:
+                    //TODO
+                    break;
+                case SEARCHBYRATE:
+                    //TODO
+                    break;
+                case UNKNOWN:
+                    System.out.println("Unknown command.");
+                    break;
+                default:
+                    break;
+            }
+            System.out.println();
         } while (!option.equals(Command.UPLOAD) && !option.equals(Command.EXIT));
-        if(!option.equals(Command.EXIT))
-        processCommand(in, system);
+        if (!option.equals(Command.EXIT))
+            processCommand(in, system);
     }
 
     private static Command getCommand(Scanner in) {
@@ -60,14 +103,15 @@ public class Main {
                     break;
                 case LOGIN:
                     login(in, system);
+                    break;
                 case DISCONNECT:
-                    //TODO
+                    disconnect(system);
                     break;
                 case LOGOUT:
-                    //TODO
+                    logout(system);
                     break;
                 case MEMBERSHIP:
-                    //TODO
+                    changePlan(in,system);
                     break;
                 case PROFILE:
                     //TODO
@@ -104,6 +148,42 @@ public class Main {
         } while (!option.equals(Command.EXIT));
     }
 
+    private static void changePlan(Scanner in, Streaming system) {
+        Plan newPlan = Plan.valueOf(in.nextLine().toUpperCase());
+        try {
+            Account loggedAccount = system.getLoggedAccount();
+            system.checkPlanChange(newPlan);
+            loggedAccount.changePlan(newPlan);
+            System.out.println(loggedAccount.getPlan());
+        } catch(NullLoggedAccountException e){
+            System.out.println(e);
+        }catch (DuplicatePlanException e){
+            System.out.println(e);
+        }catch (PlanLimitationOverflowException e){
+            System.out.println(e);
+        }
+    }
+
+    private static void logout(Streaming system) {
+        try {
+            Account loggedAccount=system.getLoggedAccount();
+            Device device=system.logout();
+            System.out.println("Goodbye " +loggedAccount + " (" + device + " still connected).");
+        } catch (NullLoggedAccountException e) {
+            System.out.println(e);
+        }
+    }
+
+    private static void disconnect(Streaming system) {
+        try {
+            Account loggedAccount=system.getLoggedAccount();
+            Device device=system.disconnect();
+            System.out.println("Goodbye " + loggedAccount + " (" + device + " was disconnected).");
+        } catch (NullLoggedAccountException e) {
+            System.out.println(e);
+        }
+    }
+
     private static void login(Scanner in, Streaming system) {
         String email, password, device;
         email = in.nextLine();
@@ -112,7 +192,7 @@ public class Main {
 
         try {
             system.login(email, password, device);
-            System.out.println("Welcome " + system.getAccount(email).getName() + "(" + device + ").");
+            System.out.println("Welcome " + system.getAccount(email).getName() + " (" + device + ").");
         } catch (AccountLoggedInException e) {
             System.out.println(e);
         } catch (OtherAccountLoggedInException e) {
@@ -134,7 +214,7 @@ public class Main {
         device = in.nextLine();
         try {
             system.register(name, email, password, device);
-            System.out.println("Welcome " + name + "(" + device + ").");
+            System.out.println("Welcome " + name + " (" + device + ").");
         } catch (OtherAccountLoggedInException e) {
             System.out.println(e);
         } catch (DuplicateEmailException e) {
@@ -143,12 +223,10 @@ public class Main {
     }
 
     private static void upload(Scanner in, Streaming system) {
-        Set<String> aux;
+        int auxCast;
         Iterator<String> itera;
-        Iterator<Show> iteraShow;
-        Iterator<Movie> iteraMovie;
-        Show currentShow;
-        Movie currentMovie;
+        Iterator<Media> iteraMedia;
+        Media current;
         int numAux = in.nextInt();
         in.nextLine();
         for (int i = 0; i < numAux; i++) {
@@ -160,30 +238,19 @@ public class Main {
             readShow(in, system);
         }
         System.out.println();
-        System.out.println("Database was uploaded:");
-        iteraShow = system.getShows();
-        while (iteraShow.hasNext()) {
-            currentShow = iteraShow.next();
-            aux = currentShow.getCast();
-            System.out.printf(FORMAT_SHOW, currentShow.getName(), currentShow.getDirector(), currentShow.getNumSeasons(), currentShow.getNumEpisodes(), currentShow.getAgeRating(), currentShow.getDebut(), currentShow.getGenre());
-            itera = aux.iterator();
-            while (itera.hasNext()) {
-                System.out.print(" " + itera.next());
-                if (itera.hasNext())
-                    System.out.print(";");
-            }
-            System.out.println(".");
-        }
-        iteraMovie = system.getMovies();
-        while (iteraMovie.hasNext()) {
-            currentMovie = iteraMovie.next();
-            aux = currentMovie.getCast();
-            System.out.printf(FORMAT_MOVIE, currentMovie.getName(), currentMovie.getDirector(), currentMovie.getDuration(), currentMovie.getAgeRating(), currentMovie.getDebut(), currentMovie.getGenre());
-            itera = aux.iterator();
-            while (itera.hasNext()) {
-                System.out.print(" " + itera.next());
-                if (itera.hasNext())
-                    System.out.print(";");
+        System.out.println("Database was updated:");
+        iteraMedia = system.getMedia();
+        while (iteraMedia.hasNext()) {
+            current = iteraMedia.next();
+            itera = current.getCast().iterator();
+            if (current instanceof Movie)
+                System.out.printf(FORMAT_MOVIE, current.getName(), current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());
+            else
+                System.out.printf(FORMAT_SHOW, current.getName(), current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());
+            auxCast = 0;
+            while (itera.hasNext() && auxCast < 3) {
+                System.out.print("; " + itera.next());
+                auxCast++;
             }
             System.out.println(".");
         }
@@ -202,11 +269,11 @@ public class Main {
         ageString = in.nextLine();
         ageString = ageString.substring(0, ageString.length() - 1);
         Integer ageRating = Integer.valueOf(ageString);
-        in.nextLine();
         debut = in.nextInt();
         in.nextLine();
         genre = in.nextLine();
         numCast = in.nextInt();
+        in.nextLine();
         for (int i = 0; i < numCast; i++) {
             collabName = in.nextLine();
             cast.add(collabName);
@@ -229,7 +296,8 @@ public class Main {
         in.nextLine();
         genre = in.nextLine();
         numCast = in.nextInt();
-        for (int i = 0; i <= numCast; i++) {
+        in.nextLine();
+        for (int i = 0; i < numCast; i++) {
             collabName = in.nextLine();
             cast.add(collabName);
         }

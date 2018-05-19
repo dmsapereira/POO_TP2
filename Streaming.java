@@ -3,6 +3,8 @@ import java.util.*;
 import Exceptions.*;
 import Media.*;
 import User.Account;
+import User.Device;
+import User.Plan;
 
 public interface Streaming {
 
@@ -13,6 +15,16 @@ public interface Streaming {
     void uploadMovie(String name, String directorName, int duration, int ageRating, int debutDate, String genre, Set<String> cast);
 
     void uploadShow(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, Set<String> cast);
+
+    Device disconnect() throws NullLoggedAccountException;
+
+    Device logout() throws NullLoggedAccountException;
+
+    Account getLoggedAccount()throws NullLoggedAccountException;
+
+    void checkPlanChange(Plan newplan) throws DuplicatePlanException,PlanLimitationOverflowException;
+
+    Iterator<Media> getMedia();
 
     Iterator<Show> getShows();
 
