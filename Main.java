@@ -46,10 +46,10 @@ public class Main {
                     logout(system);
                     break;
                 case MEMBERSHIP:
-                    //TODO
+                    changePlan(in,system);
                     break;
                 case PROFILE:
-                    //TODO
+                    addProfile(in,system);
                     break;
                 case SELECT:
                     //TODO
@@ -114,7 +114,7 @@ public class Main {
                     changePlan(in,system);
                     break;
                 case PROFILE:
-                    //TODO
+                    addProfile(in,system);
                     break;
                 case SELECT:
                     //TODO
@@ -148,13 +148,37 @@ public class Main {
         } while (!option.equals(Command.EXIT));
     }
 
+    private static void addProfile(Scanner in, Streaming system) {
+        String name,profile;
+        int ageRating = 0;
+        name = in.nextLine();
+        profile = in.nextLine().toUpperCase();
+        if(profile.equals("CHILDREN"))
+            ageRating = in.nextInt();
+        try{
+            if(profile.equals("CHILDREN"))
+            system.addChildProfile(name,ageRating);
+            else{
+                system.addStandardProfile(name);
+            }
+            System.out.println("New profile added.");
+
+        }catch (NullLoggedAccountException e){
+            System.out.println(e);
+        }catch (DuplicateProfileException e){
+            System.out.println(e);
+        }catch (ProfileLimitationOverflowException e){
+            System.out.println(e);
+        }
+    }
+
     private static void changePlan(Scanner in, Streaming system) {
         Plan newPlan = Plan.valueOf(in.nextLine().toUpperCase());
         try {
             Account loggedAccount = system.getLoggedAccount();
             system.checkPlanChange(newPlan);
             loggedAccount.changePlan(newPlan);
-            System.out.println(loggedAccount.getPlan());
+            System.out.println("Membership plan was changed from "+loggedAccount.getPlan()+" to "+newPlan+".");
         } catch(NullLoggedAccountException e){
             System.out.println(e);
         }catch (DuplicatePlanException e){

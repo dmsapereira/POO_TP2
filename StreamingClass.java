@@ -134,4 +134,29 @@ public class StreamingClass implements Streaming {
         return accountMap.get(email);
     }
 
+    @Override
+    public void addStandardProfile(String name)throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException {
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getProfiles().containsKey(name))
+            throw new DuplicateProfileException(name);
+        if(loggedAcc.getProfiles().size()>loggedAcc.getPlan().getProfileNum())
+            throw new ProfileLimitationOverflowException();
+
+        loggedAcc.addNormalProfile(name);
+    }
+
+    @Override
+    public void addChildProfile(String name,int ageRating)throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException {
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getProfiles().containsKey(name))
+            throw new DuplicateProfileException(name);
+        if(loggedAcc.getProfiles().size()>loggedAcc.getPlan().getProfileNum())
+            throw new ProfileLimitationOverflowException();
+
+        loggedAcc.addChildProfile(name,ageRating);
+    }
+
+
 }

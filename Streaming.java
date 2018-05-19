@@ -31,4 +31,8 @@ public interface Streaming {
     Iterator<Movie> getMovies();
 
     Account getAccount(String email);
+
+    void addStandardProfile(String name) throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException;
+
+    void addChildProfile(String name,int ageRating) throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException;
 }
