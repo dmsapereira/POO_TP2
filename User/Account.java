@@ -24,4 +24,8 @@ public interface Account {
 
     int getMaxDevices();
 
+    void addNormalProfile(String name);
+
+    void addChildProfile(String name, int age);
+
 }
