@@ -6,19 +6,19 @@ public class AccountClass implements Account {
 
     private Plan plan;
     private String email, password, name;
-    private int maxDevices;
-    private Set<Device> devices;
-    private Set<Profile> profiles;
+    private Device loggedDevice;
+    private LinkedHashMap<String,Device> devices;
+    private LinkedHashMap<String,Profile> profiles;
 
     public AccountClass(String name, String email, String password, Device device) {
         plan = Plan.BASIC;
-        devices = new LinkedHashSet<>(plan.getDeviceNum());
-        profiles = new LinkedHashSet<>(plan.getProfileNum());
-        devices.add(device);
+        devices = new LinkedHashMap<>();
+        profiles = new LinkedHashMap<>();
+        devices.put(device.getName(),device);
+        loggedDevice=device;
         this.name = name;
         this.email = email;
         this.password = password;
-        maxDevices= plan.deviceNum;
     }
 
 
@@ -33,7 +33,7 @@ public class AccountClass implements Account {
     }
 
     @Override
-    public Set<Device> getDevices() {
+    public LinkedHashMap<String,Device> getDevices() {
         return devices;
     }
 
@@ -43,9 +43,32 @@ public class AccountClass implements Account {
     }
 
     @Override
-    public Set<Profile> getProfiles() {
+    public LinkedHashMap<String,Profile> getProfiles() {
         return profiles;
     }
+
+    @Override
+    public void login(Device device) {
+        if(!devices.containsValue(device))
+            devices.put(device.getName(),device);
+        loggedDevice=device;
+    }
+
+    @Override
+    public Device disconnect() {
+        Device removedDevice=loggedDevice;
+        devices.remove(loggedDevice.getName());
+        loggedDevice=null;
+        return removedDevice;
+    }
+
+    @Override
+    public Device logout() {
+        Device currentDevice=loggedDevice;
+        loggedDevice=null;
+        return currentDevice;
+    }
+
 
     @Override
     public Plan getPlan() {
@@ -54,13 +77,12 @@ public class AccountClass implements Account {
 
     @Override
     public void changePlan(Plan plan) {
-            maxDevices = plan.deviceNum;
             this.plan = plan;
     }
 
     @Override
     public int getMaxDevices() {
-        return maxDevices;
+        return plan.getDeviceNum();
     }
 
     @Override
@@ -75,5 +97,10 @@ public class AccountClass implements Account {
     public int hashCode() {
 
         return Objects.hash(email);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

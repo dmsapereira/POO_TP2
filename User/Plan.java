@@ -11,7 +11,7 @@ public enum Plan {
          this.profileNum=profileNum;
      }
 
-     int getDeviceNum(){return deviceNum;}
+    public int getDeviceNum(){return deviceNum;}
 
-     int getProfileNum(){return profileNum;}
+     public int getProfileNum(){return profileNum;}
 }

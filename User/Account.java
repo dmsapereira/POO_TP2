@@ -9,10 +9,15 @@ public interface Account {
 
     String getPassword();
 
-    Set<Device> getDevices();
+    LinkedHashMap<String,Device> getDevices();
 
-    Set<Profile> getProfiles();
+    LinkedHashMap<String,Profile> getProfiles();
 
+    void login(Device device);
+
+    Device disconnect();
+
+    Device logout();
     Plan getPlan();
 
     void changePlan(Plan newPlan);
