@@ -3,6 +3,7 @@ import java.util.*;
 import Exceptions.*;
 import Media.*;
 import User.Account;
+import User.Device;
 
 public interface Streaming {
 
@@ -13,6 +14,14 @@ public interface Streaming {
     void uploadMovie(String name, String directorName, int duration, int ageRating, int debutDate, String genre, Set<String> cast);
 
     void uploadShow(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, Set<String> cast);
+
+    Device disconnect() throws NullLoggedAccountException;
+
+    Device logout() throws NullLoggedAccountException;
+
+    Account getLoggedAccount();
+
+    Iterator<Media> getMedia();
 
     Iterator<Show> getShows();
 

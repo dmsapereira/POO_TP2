@@ -2,18 +2,16 @@ import java.util.*;
 
 import Exceptions.*;
 import Media.*;
-import User.Account;
-import User.AccountClass;
-import User.DeviceClass;
+import User.*;
 
 public class StreamingClass implements Streaming {
 
-    private Set<AbsMedia> media;
+    private Map<String,Media> media;
     private Account loggedAcc;
     private Map<String, Account> accountMap;
 
     public StreamingClass() {
-        this.media = new LinkedHashSet<AbsMedia>();
+        this.media = new TreeMap<>();
         this.accountMap = new LinkedHashMap<>();
     }
 
@@ -32,38 +30,69 @@ public class StreamingClass implements Streaming {
     @Override
     public void login(String email, String password, String device) throws AccountLoggedInException, DeviceCapacityException, NullAccountException, OtherAccountLoggedInException, WrongPasswordException {
         Account aux = accountMap.get(email);
-
-        if (aux!=null && loggedAcc.getEmail().equals(email))
+        Device newDevice;
+        if (aux!=null && loggedAcc!=null&& loggedAcc.getEmail().equals(email))
             throw new AccountLoggedInException();
-        if (aux !=null && loggedAcc!=(null))
+        if (loggedAcc!=(null))
             throw new OtherAccountLoggedInException();
         if (aux==(null))
             throw new NullAccountException();
         if (!aux.getPassword().equals(password))
             throw new WrongPasswordException();
-        if (aux.getMaxDevices() == aux.getDevices().size())
+        newDevice=new DeviceClass(device);
+        if (aux.getMaxDevices() == aux.getDevices().size() && !aux.getDevices().containsKey(device))
             throw new DeviceCapacityException();
-
         loggedAcc = aux;
+        loggedAcc.login(newDevice);
     }
 
     @Override
     public void uploadMovie(String name, String directorName, int duration, int ageRating, int debutDate, String
             genre, Set<String> cast) {
-        media.add(new MovieClass(name, directorName, duration, ageRating, debutDate, genre, cast));
+        media.put(name,new MovieClass(name, directorName, duration, ageRating, debutDate, genre, cast));
     }
 
     @Override
     public void uploadShow(String name, String directorName, int numSeasons, int numEpisodes, int ageRating,
                            int debutDate, String genre, Set<String> cast) {
-        media.add(new ShowClass(name, directorName, numSeasons, numEpisodes, ageRating, debutDate, genre, cast));
+        media.put(name,new ShowClass(name, directorName, numSeasons, numEpisodes, ageRating, debutDate, genre, cast));
+    }
+
+    @Override
+    public Device disconnect() throws NullLoggedAccountException {
+        Device device;
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        device=loggedAcc.disconnect();
+       loggedAcc=null;
+       return device;
+    }
+
+    @Override
+    public Device logout() throws NullLoggedAccountException {
+        Device device;
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        device=loggedAcc.logout();
+        loggedAcc=null;
+        return device;
+    }
+
+    @Override
+    public Account getLoggedAccount() {
+        return loggedAcc;
+    }
+
+    @Override
+    public Iterator<Media> getMedia() {
+        return media.values().iterator();
     }
 
     @Override
     public Iterator<Show> getShows() {
-        AbsMedia current;
+        Media current;
         Set<Show> aux = new LinkedHashSet<Show>(media.size());
-        Iterator<AbsMedia> itera = media.iterator();
+        Iterator<Media> itera = media.values().iterator();
         while (itera.hasNext()) {
             current = itera.next();
             if (current instanceof Show)
@@ -74,9 +103,9 @@ public class StreamingClass implements Streaming {
 
     @Override
     public Iterator<Movie> getMovies() {
-        AbsMedia current;
+        Media current;
         Set<Movie> aux = new LinkedHashSet<Movie>(media.size());
-        Iterator<AbsMedia> itera = media.iterator();
+        Iterator<Media> itera = media.values().iterator();
         while (itera.hasNext()) {
             current = itera.next();
             if (current instanceof Movie)
