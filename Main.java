@@ -1,10 +1,10 @@
-
 import java.util.*;
 
 import Exceptions.*;
 import Media.*;
 import User.Account;
 import User.Device;
+import User.Plan;
 
 public class Main {
     private static final String FORMAT_SHOW = "%s; %s; %d; %d; %d+; %d; %s";
@@ -45,10 +45,10 @@ public class Main {
                     logout(system);
                     break;
                 case MEMBERSHIP:
-                    //TODO
+                    changePlan(in,system);
                     break;
                 case PROFILE:
-                    //TODO
+                    addProfile(in,system);
                     break;
                 case SELECT:
                     //TODO
@@ -110,10 +110,10 @@ public class Main {
                     logout(system);
                     break;
                 case MEMBERSHIP:
-                    //TODO
+                    changePlan(in,system);
                     break;
                 case PROFILE:
-                    //TODO
+                    addProfile(in,system);
                     break;
                 case SELECT:
                     //TODO
@@ -145,6 +145,46 @@ public class Main {
             }
             System.out.println();
         } while (!option.equals(Command.EXIT));
+    }
+
+    private static void addProfile(Scanner in, Streaming system) {
+        String name,profile;
+        int ageRating = 0;
+        name = in.nextLine();
+        profile = in.nextLine().toUpperCase();
+        if(profile.equals("CHILDREN"))
+            ageRating = in.nextInt();
+        try{
+            if(profile.equals("CHILDREN"))
+            system.addChildProfile(name,ageRating);
+            else{
+                system.addStandardProfile(name);
+            }
+            System.out.println("New profile added.");
+
+        }catch (NullLoggedAccountException e){
+            System.out.println(e);
+        }catch (DuplicateProfileException e){
+            System.out.println(e);
+        }catch (ProfileLimitationOverflowException e){
+            System.out.println(e);
+        }
+    }
+
+    private static void changePlan(Scanner in, Streaming system) {
+        Plan newPlan = Plan.valueOf(in.nextLine().toUpperCase());
+        try {
+            Account loggedAccount = system.getLoggedAccount();
+            system.checkPlanChange(newPlan);
+            loggedAccount.changePlan(newPlan);
+            System.out.println("Membership plan was changed from "+loggedAccount.getPlan()+" to "+newPlan+".");
+        } catch(NullLoggedAccountException e){
+            System.out.println(e);
+        }catch (DuplicatePlanException e){
+            System.out.println(e);
+        }catch (PlanLimitationOverflowException e){
+            System.out.println(e);
+        }
     }
 
     private static void logout(Streaming system) {
@@ -290,3 +330,4 @@ public class Main {
 
 }
 
+>>>>>>> 4323657b7f532c5fb8085c3602620e87a2685466

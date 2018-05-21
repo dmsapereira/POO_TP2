@@ -79,8 +79,23 @@ public class StreamingClass implements Streaming {
     }
 
     @Override
-    public Account getLoggedAccount() {
+    public Account getLoggedAccount() throws NullLoggedAccountException {
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
         return loggedAcc;
+    }
+
+    @Override
+    public void checkPlanChange(Plan newPlan) throws DuplicatePlanException,PlanLimitationOverflowException {
+
+        if(newPlan.equals(loggedAcc.getPlan()))
+            throw new DuplicatePlanException();
+
+        if(newPlan.getDeviceNum()<loggedAcc.getDevices().size())
+            throw new PlanLimitationOverflowException();
+
+
+
     }
 
     @Override
@@ -119,4 +134,30 @@ public class StreamingClass implements Streaming {
         return accountMap.get(email);
     }
 
+    @Override
+    public void addStandardProfile(String name)throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException {
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getProfiles().containsKey(name))
+            throw new DuplicateProfileException(name);
+        if(loggedAcc.getProfiles().size()>loggedAcc.getPlan().getProfileNum())
+            throw new ProfileLimitationOverflowException();
+
+        loggedAcc.addNormalProfile(name);
+    }
+
+    @Override
+    public void addChildProfile(String name,int ageRating)throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException {
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getProfiles().containsKey(name))
+            throw new DuplicateProfileException(name);
+        if(loggedAcc.getProfiles().size()>loggedAcc.getPlan().getProfileNum())
+            throw new ProfileLimitationOverflowException();
+
+        loggedAcc.addChildProfile(name,ageRating);
+    }
+
+
 }
+>>>>>>> 4323657b7f532c5fb8085c3602620e87a2685466

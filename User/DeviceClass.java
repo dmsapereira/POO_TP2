@@ -17,3 +17,4 @@ public class DeviceClass implements Device {
     @Override
     public String toString(){ return this.name;}
 }
+

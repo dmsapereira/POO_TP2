@@ -7,15 +7,15 @@ public class AccountClass implements Account {
     private Plan plan;
     private String email, password, name;
     private Device loggedDevice;
-    private LinkedHashMap<String,Device> devices;
-    private LinkedHashMap<String,Profile> profiles;
+    private LinkedHashMap<String, Device> devices;
+    private LinkedHashMap<String, Profile> profiles;
 
     public AccountClass(String name, String email, String password, Device device) {
         plan = Plan.BASIC;
         devices = new LinkedHashMap<>();
         profiles = new LinkedHashMap<>();
-        devices.put(device.getName(),device);
-        loggedDevice=device;
+        devices.put(device.getName(), device);
+        loggedDevice = device;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -33,7 +33,7 @@ public class AccountClass implements Account {
     }
 
     @Override
-    public LinkedHashMap<String,Device> getDevices() {
+    public LinkedHashMap<String, Device> getDevices() {
         return devices;
     }
 
@@ -43,29 +43,29 @@ public class AccountClass implements Account {
     }
 
     @Override
-    public LinkedHashMap<String,Profile> getProfiles() {
+    public LinkedHashMap<String, Profile> getProfiles() {
         return profiles;
     }
 
     @Override
     public void login(Device device) {
-        if(!devices.containsValue(device))
-            devices.put(device.getName(),device);
-        loggedDevice=device;
+        if (!devices.containsValue(device))
+            devices.put(device.getName(), device);
+        loggedDevice = device;
     }
 
     @Override
     public Device disconnect() {
-        Device removedDevice=loggedDevice;
+        Device removedDevice = loggedDevice;
         devices.remove(loggedDevice.getName());
-        loggedDevice=null;
+        loggedDevice = null;
         return removedDevice;
     }
 
     @Override
     public Device logout() {
-        Device currentDevice=loggedDevice;
-        loggedDevice=null;
+        Device currentDevice = loggedDevice;
+        loggedDevice = null;
         return currentDevice;
     }
 
@@ -77,12 +77,24 @@ public class AccountClass implements Account {
 
     @Override
     public void changePlan(Plan plan) {
-            this.plan = plan;
+        this.plan = plan;
     }
 
     @Override
     public int getMaxDevices() {
         return plan.getDeviceNum();
+    }
+
+    @Override
+    public void addNormalProfile(String name) {
+        profiles.put(name, new StandardProfileClass(name));
+
+    }
+
+    @Override
+    public void addChildProfile(String name, int age) {
+        profiles.put(name, new KidProfileClass(name, age));
+
     }
 
     @Override
