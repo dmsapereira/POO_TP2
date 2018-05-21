@@ -1,0 +1,393 @@
+[33mcommit 6a5b18982ddfdb66922aa04e0a07063effe7431f[m
+Merge: 6d19b41 4323657
+Author: David <david.pinguim2@hotmail.com>
+Date:   Mon May 21 11:03:09 2018 +0100
+
+    Solve conflicts
+
+[1mdiff --cc Exceptions/NullLoggedAccountException.java[m
+[1mindex 8e7d2c4,6425ad2..75b8838[m
+[1m--- a/Exceptions/NullLoggedAccountException.java[m
+[1m+++ b/Exceptions/NullLoggedAccountException.java[m
+[36m@@@ -1,11 -1,11 +1,25 @@@[m
+[32m++<<<<<<< HEAD[m
+[32m +package Exceptions;[m
+[32m +[m
+[32m +public class NullLoggedAccountException extends Exception {[m
+[32m +    public NullLoggedAccountException(){[m
+[32m +        super();[m
+[32m +    }[m
+[32m +[m
+[32m +    public String toString(){[m
+[32m +        return "No client is logged in.";[m
+[32m +    }[m
+[32m +}[m
+[32m++=======[m
+[32m+ package Exceptions;[m
+[32m+ [m
+[32m+ public class NullLoggedAccountException extends Exception {[m
+[32m+     public NullLoggedAccountException(){[m
+[32m+         super();[m
+[32m+     }[m
+[32m+ [m
+[32m+     public String toString(){[m
+[32m+         return "No client is logged in.";[m
+[32m+     }[m
+[32m+ }[m
+[32m++>>>>>>> 4323657b7f532c5fb8085c3602620e87a2685466[m
+[1mdiff --cc Main.java[m
+[1mindex c2b9329,cfee894..d0fdfb7[m
+[1m--- a/Main.java[m
+[1m+++ b/Main.java[m
+[36m@@@ -1,292 -1,333 +1,333 @@@[m
+[31m- [m
+[31m- import java.util.*;[m
+[31m- [m
+[31m- import Exceptions.*;[m
+[31m- import Media.*;[m
+[31m- import User.Account;[m
+[31m- import User.Device;[m
+[31m- [m
+[31m- public class Main {[m
+[31m-     private static final String FORMAT_SHOW = "%s; %s; %d; %d; %d+; %d; %s";[m
+[31m-     private static final String FORMAT_MOVIE = "%s; %s; %d; %d+; %d; %s";[m
+[31m- [m
+[31m-     private enum Command[m
+[31m- [m
+[31m-     {[m
+[31m-         UPLOAD, REGISTER, LOGIN, DISCONNECT, LOGOUT, MEMBERSHIP, PROFILE, SELECT, WATCH, RATE, INFOACCOUNT, SEARCHBYGENRE, SEARCHBYNAME, SEARCHBYRATE, EXIT, UNKNOWN[m
+[31m-     }[m
+[31m- [m
+[31m-     public static void main(String[] args) {[m
+[31m-         Scanner in = new Scanner(System.in);[m
+[31m-         Streaming system = new StreamingClass();[m
+[31m-         firstCommand(in, system);[m
+[31m- [m
+[31m-         System.out.println("Exiting...");[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void firstCommand(Scanner in, Streaming system) {[m
+[31m-         Command option;[m
+[31m-         do {[m
+[31m-             option = getCommand(in);[m
+[31m-             switch (option) {[m
+[31m-                 case UPLOAD:[m
+[31m-                     upload(in, system);[m
+[31m-                     break;[m
+[31m-                 case REGISTER:[m
+[31m-                     register(in, system);[m
+[31m-                     break;[m
+[31m-                 case LOGIN:[m
+[31m-                     login(in, system);[m
+[31m-                     break;[m
+[31m-                 case DISCONNECT:[m
+[31m-                     disconnect(system);[m
+[31m-                     break;[m
+[31m-                 case LOGOUT:[m
+[31m-                     logout(system);[m
+[31m-                     break;[m
+[31m-                 case MEMBERSHIP:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case PROFILE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SELECT:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case WATCH:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case RATE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case INFOACCOUNT:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SEARCHBYGENRE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SEARCHBYNAME:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SEARCHBYRATE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case UNKNOWN:[m
+[31m-                     System.out.println("Unknown command.");[m
+[31m-                     break;[m
+[31m-                 default:[m
+[31m-                     break;[m
+[31m-             }[m
+[31m-             System.out.println();[m
+[31m-         } while (!option.equals(Command.UPLOAD) && !option.equals(Command.EXIT));[m
+[31m-         if (!option.equals(Command.EXIT))[m
+[31m-             processCommand(in, system);[m
+[31m-     }[m
+[31m- [m
+[31m-     private static Command getCommand(Scanner in) {[m
+[31m-         try {[m
+[31m-             String input = in.nextLine().toUpperCase();[m
+[31m-             return Command.valueOf(input);[m
+[31m-         } catch (IllegalArgumentException e) {[m
+[31m-             return Command.UNKNOWN;[m
+[31m-         }[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void processCommand(Scanner in, Streaming system) {[m
+[31m-         Command option;[m
+[31m-         do {[m
+[31m-             option = getCommand(in);[m
+[31m-             switch (option) {[m
+[31m-                 case REGISTER:[m
+[31m-                     register(in, system);[m
+[31m-                     break;[m
+[31m-                 case LOGIN:[m
+[31m-                     login(in, system);[m
+[31m-                     break;[m
+[31m-                 case DISCONNECT:[m
+[31m-                     disconnect(system);[m
+[31m-                     break;[m
+[31m-                 case LOGOUT:[m
+[31m-                     logout(system);[m
+[31m-                     break;[m
+[31m-                 case MEMBERSHIP:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case PROFILE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SELECT:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case WATCH:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case RATE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case INFOACCOUNT:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SEARCHBYGENRE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SEARCHBYNAME:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case SEARCHBYRATE:[m
+[31m-                     //TODO[m
+[31m-                     break;[m
+[31m-                 case UPLOAD:[m
+[31m-                 case UNKNOWN:[m
+[31m-                     System.out.println("Unknown command.");[m
+[31m-                     break;[m
+[31m-                 default:[m
+[31m-                     break;[m
+[31m-             }[m
+[31m-             System.out.println();[m
+[31m-         } while (!option.equals(Command.EXIT));[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void logout(Streaming system) {[m
+[31m-         try {[m
+[31m-             Account loggedAccount=system.getLoggedAccount();[m
+[31m-             Device device=system.logout();[m
+[31m-             System.out.println("Goodbye " +loggedAccount + " (" + device + " still connected).");[m
+[31m-         } catch (NullLoggedAccountException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         }[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void disconnect(Streaming system) {[m
+[31m-         try {[m
+[31m-             Account loggedAccount=system.getLoggedAccount();[m
+[31m-             Device device=system.disconnect();[m
+[31m-             System.out.println("Goodbye " + loggedAccount + " (" + device + " was disconnected).");[m
+[31m-         } catch (NullLoggedAccountException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         }[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void login(Scanner in, Streaming system) {[m
+[31m-         String email, password, device;[m
+[31m-         email = in.nextLine();[m
+[31m-         password = in.nextLine();[m
+[31m-         device = in.nextLine();[m
+[31m- [m
+[31m-         try {[m
+[31m-             system.login(email, password, device);[m
+[31m-             System.out.println("Welcome " + system.getAccount(email).getName() + " (" + device + ").");[m
+[31m-         } catch (AccountLoggedInException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         } catch (OtherAccountLoggedInException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         } catch (NullAccountException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         } catch (WrongPasswordException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         } catch (DeviceCapacityException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         }[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void register(Scanner in, Streaming system) {[m
+[31m-         String name, email, password, device;[m
+[31m-         name = in.nextLine();[m
+[31m-         email = in.nextLine();[m
+[31m-         password = in.nextLine();[m
+[31m-         device = in.nextLine();[m
+[31m-         try {[m
+[31m-             system.register(name, email, password, device);[m
+[31m-             System.out.println("Welcome " + name + " (" + device + ").");[m
+[31m-         } catch (OtherAccountLoggedInException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         } catch (DuplicateEmailException e) {[m
+[31m-             System.out.println(e);[m
+[31m-         }[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void upload(Scanner in, Streaming system) {[m
+[31m-         int auxCast;[m
+[31m-         Iterator<String> itera;[m
+[31m-         Iterator<Media> iteraMedia;[m
+[31m-         Media current;[m
+[31m-         int numAux = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         for (int i = 0; i < numAux; i++) {[m
+[31m-             readMovie(in, system);[m
+[31m-         }[m
+[31m-         numAux = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         for (int j = 0; j < numAux; j++) {[m
+[31m-             readShow(in, system);[m
+[31m-         }[m
+[31m-         System.out.println();[m
+[31m-         System.out.println("Database was updated:");[m
+[31m-         iteraMedia = system.getMedia();[m
+[31m-         while (iteraMedia.hasNext()) {[m
+[31m-             current = iteraMedia.next();[m
+[31m-             itera = current.getCast().iterator();[m
+[31m-             if (current instanceof Movie)[m
+[31m-                 System.out.printf(FORMAT_MOVIE, current.getName(), current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());[m
+[31m-             else[m
+[31m-                 System.out.printf(FORMAT_SHOW, current.getName(), current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());[m
+[31m-             auxCast = 0;[m
+[31m-             while (itera.hasNext() && auxCast < 3) {[m
+[31m-                 System.out.print("; " + itera.next());[m
+[31m-                 auxCast++;[m
+[31m-             }[m
+[31m-             System.out.println(".");[m
+[31m-         }[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void readShow(Scanner in, Streaming system) {[m
+[31m-         String name, director, genre, collabName, ageString;[m
+[31m-         int numEpisodes, numSeasons, debut, numCast;[m
+[31m-         Set<String> cast = new LinkedHashSet<>();[m
+[31m-         name = in.nextLine();[m
+[31m-         director = in.nextLine();[m
+[31m-         numSeasons = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         numEpisodes = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         ageString = in.nextLine();[m
+[31m-         ageString = ageString.substring(0, ageString.length() - 1);[m
+[31m-         Integer ageRating = Integer.valueOf(ageString);[m
+[31m-         debut = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         genre = in.nextLine();[m
+[31m-         numCast = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         for (int i = 0; i < numCast; i++) {[m
+[31m-             collabName = in.nextLine();[m
+[31m-             cast.add(collabName);[m
+[31m-         }[m
+[31m-         system.uploadShow(name, director, numSeasons, numEpisodes, ageRating, debut, genre, cast);[m
+[31m-     }[m
+[31m- [m
+[31m-     private static void readMovie(Scanner in, Streaming system) {[m
+[31m-         String name, director, genre, ageString, collabName;[m
+[31m-         int duration, debut, numCast;[m
+[31m-         Set<String> cast = new LinkedHashSet<>();[m
+[31m-         name = in.nextLine();[m
+[31m-         director = in.nextLine();[m
+[31m-         duration = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         ageString = in.nextLine();[m
+[31m-         ageString = ageString.substring(0, ageString.length() - 1);[m
+[31m-         Integer ageRating = Integer.valueOf(ageString);[m
+[31m-         debut = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         genre = in.nextLine();[m
+[31m-         numCast = in.nextInt();[m
+[31m-         in.nextLine();[m
+[31m-         for (int i = 0; i < numCast; i++) {[m
+[31m-             collabName = in.nextLine();[m
+[31m-             cast.add(collabName);[m
+[31m-         }[m
+[31m-         system.uploadMovie(name, director, duration, ageRating, debut, genre, cast);[m
+[31m-     }[m
+[31m- [m
+[31m- [m
+[31m- }[m
+[31m- [m
+[31m -[m
+[32m+ import java.util.*;[m
+[32m+ [m
+[32m+ import Exceptions.*;[m
+[32m+ import Media.*;[m
+[32m+ import User.Account;[m
+[32m+ import User.Device;[m
+[32m+ import User.Plan;[m
+[32m+ [m
+[32m+ public class Main {[m
+[32m+     private static final String FORMAT_SHOW = "%s; %s; %d; %d; %d+; %d; %s";[m
+[32m+     private static final String FORMAT_MOVIE = "%s; %s; %d; %d+; %d; %s";[m
+[32m+ [m
+[32m+     private enum Command[m
+[32m+ [m
+[32m+     {[m
+[32m+         UPLOAD, REGISTER, LOGIN, DISCONNECT, LOGOUT, MEMBERSHIP, PROFILE, SELECT, WATCH, RATE, INFOACCOUNT, SEARCHBYGENRE, SEARCHBYNAME, SEARCHBYRATE, EXIT, UNKNOWN[m
+[32m+     }[m
+[32m+ [m
+[32m+     public static void main(String[] args) {[m
+[32m+         Scanner in = new Scanner(System.in);[m
+[32m+         Streaming system = new StreamingClass();[m
+[32m+         firstCommand(in, system);[m
+[32m+ [m
+[32m+         System.out.println("Exiting...");[m
+[32m+     }[m
+[32m+ [m
+[32m+     private static void firstCommand(Scanner in, Streaming system) {[m
+[32m+         Command option;[m
+[32m+         do {[m
+[32m+             option = getCommand(in);[m
+[32m+             switch (option) {[m
+[32m+                 case UPLOAD:[m
+[32m+                     upload(in, system);[m
+[32m+                     break;[m
+[32m+                 case REGISTER:[m
+[32m+                     register(in, system);[m
+[32m+                     break;[m
+[32m+                 case LOGIN:[m
+[32m+                     login(in, system);[m
+[32m+                     break;[m
+[32m+                 case DISCONNECT:[m
+[32m+                     disconnect(system);[m
+[32m+                     break;[m
+[32m+                 case LOGOUT:[m
+[32m+                     logout(system);[m
+[32m+                     break;[m
+[32m+                 case MEMBERSHIP:[m
+[32m+                     changePlan(in,system);[m
+[32m+                     break;[m
+[32m+                 case PROFILE:[m
+[32m+                     addProfile(in,system);[m
+[32m+                     break;[m
+[32m+                 case SELECT:[m
+[32m+                     //TODO[m
+[32m+                     break;[m
+[32m+                 case WATCH:[m
+[32m+                     //TODO[m
+[32m+         

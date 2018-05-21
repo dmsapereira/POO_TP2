@@ -4,8 +4,12 @@ import Media.*;
 
 public interface Profile {
 
-    Set<Show> getWatched();
+    LinkedHashMap<String,Media> getWatched();
 
-    void watch(Show show);
+    LinkedHashMap<String,Integer> getRated();
+
+    void watch(Media media);
+
+    void rateMedia(String name, int rating);
 
 }

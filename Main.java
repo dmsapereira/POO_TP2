@@ -2,9 +2,7 @@ import java.util.*;
 
 import Exceptions.*;
 import Media.*;
-import User.Account;
-import User.Device;
-import User.Plan;
+import User.*;
 
 public class Main {
     private static final String FORMAT_SHOW = "%s; %s; %d; %d; %d+; %d; %s";
@@ -20,7 +18,6 @@ public class Main {
         Scanner in = new Scanner(System.in);
         Streaming system = new StreamingClass();
         firstCommand(in, system);
-
         System.out.println("Exiting...");
     }
 
@@ -45,22 +42,22 @@ public class Main {
                     logout(system);
                     break;
                 case MEMBERSHIP:
-                    changePlan(in,system);
+                    changePlan(in, system);
                     break;
                 case PROFILE:
-                    addProfile(in,system);
+                    addProfile(in, system);
                     break;
                 case SELECT:
-                    //TODO
+                    selectProfile(in, system);
                     break;
                 case WATCH:
-                    //TODO
+                    watch(in, system);
                     break;
                 case RATE:
-                    //TODO
+                    rate(in, system);
                     break;
                 case INFOACCOUNT:
-                    //TODO
+                    infoAccount(system);
                     break;
                 case SEARCHBYGENRE:
                     //TODO
@@ -77,7 +74,8 @@ public class Main {
                 default:
                     break;
             }
-            System.out.println();
+            if (!option.equals(Command.EXIT))
+                System.out.println();
         } while (!option.equals(Command.UPLOAD) && !option.equals(Command.EXIT));
         if (!option.equals(Command.EXIT))
             processCommand(in, system);
@@ -110,22 +108,22 @@ public class Main {
                     logout(system);
                     break;
                 case MEMBERSHIP:
-                    changePlan(in,system);
+                    changePlan(in, system);
                     break;
                 case PROFILE:
-                    addProfile(in,system);
+                    addProfile(in, system);
                     break;
                 case SELECT:
-                    //TODO
+                    selectProfile(in, system);
                     break;
                 case WATCH:
-                    //TODO
+                    watch(in, system);
                     break;
                 case RATE:
-                    //TODO
+                    rate(in, system);
                     break;
                 case INFOACCOUNT:
-                    //TODO
+                    infoAccount(system);
                     break;
                 case SEARCHBYGENRE:
                     //TODO
@@ -147,26 +145,129 @@ public class Main {
         } while (!option.equals(Command.EXIT));
     }
 
+    private static void infoAccount(Streaming system) {
+        Account account;
+        try {
+            account = system.getLoggedAccount();
+            System.out.println(account + ":");
+            System.out.print(account.getPlan() + " (");
+            printDevices(account);
+            printProfiles(account);
+        } catch (NullLoggedAccountException e) {
+            System.out.println(e);
+        }
+    }
+
+    private static void printProfiles(Account account) {
+        Profile current;
+        Iterator<Profile> itera = account.getProfiles().values().iterator();
+        if (!itera.hasNext())
+            System.out.println("No profiles defined.");
+        else {
+            while (itera.hasNext()) {
+                current = itera.next();
+                System.out.print("Profile: " + current);
+                if (current instanceof KidProfile)
+                    System.out.println(" (" + ((KidProfile) current).getAgeRating() + ")");
+                else
+                    System.out.println();
+                    printWatched(current);
+                    printRated(current);
+
+            }
+        }
+    }
+
+    private static void printRated(Profile current) {
+        Iterator<Integer> iteraRating = current.getRated().values().iterator();
+        Iterator<String> iteraMedia = current.getRated().keySet().iterator();
+        if(iteraRating.hasNext()) {
+            while (iteraRating.hasNext()) {
+                System.out.print(iteraMedia.next() + " (" + iteraRating.next() + ")");
+                if (iteraRating.hasNext())
+                    System.out.print("; ");
+            }
+            System.out.println(".");
+        }
+    }
+
+    private static void printWatched(Profile current) {
+        Media media;
+        Iterator<Media> itera = current.getWatched().values().iterator();
+        if (!itera.hasNext())
+            System.out.println("Empty list of recently seen shows.");
+        else {
+            while (itera.hasNext()) {
+                media = itera.next();
+                System.out.print(media);
+                if (itera.hasNext())
+                    System.out.print("; ");
+            }
+            System.out.println(".");
+        }
+    }
+
+    private static void printDevices(Account account) {
+        Iterator<Device> deviceItera = account.getDevices().values().iterator();
+        while (deviceItera.hasNext()) {
+            System.out.print(deviceItera.next());
+            if (deviceItera.hasNext())
+                System.out.print("; ");
+        }
+        System.out.println(").");
+    }
+
+    private static void rate(Scanner in, Streaming system) {
+        String media;
+        int rating;
+        media = in.nextLine();
+        rating = in.nextInt();
+        in.nextLine();
+        try {
+            system.rate(media, rating);
+            System.out.println("Thank you for rating " + media + ".");
+        } catch (NullLoggedAccountException | NullLoggedProfileException | NullMediaException | NullWatchedMediaException | DuplicateRatedMediaException e) {
+            System.out.println(e);
+        }
+
+    }
+
+    private static void watch(Scanner in, Streaming system) {
+        String mediaName = in.nextLine();
+        try {
+            system.watch(mediaName);
+            System.out.println("Loading " + mediaName + "...");
+        } catch (NullLoggedAccountException | NullLoggedProfileException | NullMediaException | AgeRatingMismatchException e) {
+            System.out.println(e);
+        }
+    }
+
+
+    private static void selectProfile(Scanner in, Streaming system) {
+        String name;
+        name = in.nextLine();
+        try {
+            system.selectProfile(name);
+            System.out.println("Welcome " + name + ".");
+        } catch (NullLoggedAccountException | NullProfileException e) {
+            System.out.println(e);
+        }
+    }
+
     private static void addProfile(Scanner in, Streaming system) {
-        String name,profile;
+        String name, profile;
         int ageRating = 0;
         name = in.nextLine();
         profile = in.nextLine().toUpperCase();
-        if(profile.equals("CHILDREN"))
-            ageRating = in.nextInt();
-        try{
-            if(profile.equals("CHILDREN"))
-            system.addChildProfile(name,ageRating);
-            else{
+        try {
+            if (profile.equals("CHILDREN")) {
+                ageRating = in.nextInt();
+                in.nextLine();
+                system.addChildProfile(name, ageRating);
+            } else
                 system.addStandardProfile(name);
-            }
             System.out.println("New profile added.");
-
-        }catch (NullLoggedAccountException e){
-            System.out.println(e);
-        }catch (DuplicateProfileException e){
-            System.out.println(e);
-        }catch (ProfileLimitationOverflowException e){
+        } catch (NullLoggedAccountException | DuplicateProfileException | ProfileLimitationOverflowException e) {
             System.out.println(e);
         }
     }
@@ -174,24 +275,19 @@ public class Main {
     private static void changePlan(Scanner in, Streaming system) {
         Plan newPlan = Plan.valueOf(in.nextLine().toUpperCase());
         try {
-            Account loggedAccount = system.getLoggedAccount();
-            system.checkPlanChange(newPlan);
-            loggedAccount.changePlan(newPlan);
-            System.out.println("Membership plan was changed from "+loggedAccount.getPlan()+" to "+newPlan+".");
-        } catch(NullLoggedAccountException e){
-            System.out.println(e);
-        }catch (DuplicatePlanException e){
-            System.out.println(e);
-        }catch (PlanLimitationOverflowException e){
+            Plan oldPlan = system.getLoggedAccount().getPlan();
+            system.changePlan(newPlan);
+            System.out.println("Membership plan was changed from " + oldPlan + " to " + newPlan + ".");
+        } catch (NullLoggedAccountException | DuplicatePlanException | PlanLimitationOverflowException e) {
             System.out.println(e);
         }
     }
 
     private static void logout(Streaming system) {
         try {
-            Account loggedAccount=system.getLoggedAccount();
-            Device device=system.logout();
-            System.out.println("Goodbye " +loggedAccount + " (" + device + " still connected).");
+            Account loggedAccount = system.getLoggedAccount();
+            Device device = system.logout();
+            System.out.println("Goodbye " + loggedAccount + " (" + device + " still connected).");
         } catch (NullLoggedAccountException e) {
             System.out.println(e);
         }
@@ -199,8 +295,8 @@ public class Main {
 
     private static void disconnect(Streaming system) {
         try {
-            Account loggedAccount=system.getLoggedAccount();
-            Device device=system.disconnect();
+            Account loggedAccount = system.getLoggedAccount();
+            Device device = system.disconnect();
             System.out.println("Goodbye " + loggedAccount + " (" + device + " was disconnected).");
         } catch (NullLoggedAccountException e) {
             System.out.println(e);
@@ -216,15 +312,7 @@ public class Main {
         try {
             system.login(email, password, device);
             System.out.println("Welcome " + system.getAccount(email).getName() + " (" + device + ").");
-        } catch (AccountLoggedInException e) {
-            System.out.println(e);
-        } catch (OtherAccountLoggedInException e) {
-            System.out.println(e);
-        } catch (NullAccountException e) {
-            System.out.println(e);
-        } catch (WrongPasswordException e) {
-            System.out.println(e);
-        } catch (DeviceCapacityException e) {
+        } catch (AccountLoggedInException | OtherAccountLoggedInException | WrongPasswordException | NullAccountException | DeviceCapacityException e) {
             System.out.println(e);
         }
     }
@@ -238,9 +326,7 @@ public class Main {
         try {
             system.register(name, email, password, device);
             System.out.println("Welcome " + name + " (" + device + ").");
-        } catch (OtherAccountLoggedInException e) {
-            System.out.println(e);
-        } catch (DuplicateEmailException e) {
+        } catch (OtherAccountLoggedInException | DuplicateEmailException e) {
             System.out.println(e);
         }
     }
@@ -267,9 +353,9 @@ public class Main {
             current = iteraMedia.next();
             itera = current.getCast().iterator();
             if (current instanceof Movie)
-                System.out.printf(FORMAT_MOVIE, current.getName(), current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());
+                System.out.printf(FORMAT_MOVIE, current, current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());
             else
-                System.out.printf(FORMAT_SHOW, current.getName(), current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());
+                System.out.printf(FORMAT_SHOW, current, current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());
             auxCast = 0;
             while (itera.hasNext() && auxCast < 3) {
                 System.out.print("; " + itera.next());
@@ -329,5 +415,3 @@ public class Main {
 
 
 }
-
->>>>>>> 4323657b7f532c5fb8085c3602620e87a2685466

@@ -18,10 +18,7 @@ public class AbsMedia implements Media,Comparable<Media> {
         this.cast=cast;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
+    public String toString(){ return this.name;}
 
     @Override
     public String getDirector() {
@@ -51,7 +48,7 @@ public class AbsMedia implements Media,Comparable<Media> {
 
     @Override
     public int compareTo(Media media) {
-        return this.name.compareTo(media.getName());
+        return this.name.compareTo(media.toString());
     }
 
     @Override

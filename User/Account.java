@@ -1,4 +1,6 @@
 package User;
+import Media.*;
+
 import java.util.*;
 
 public interface Account {
@@ -13,11 +15,16 @@ public interface Account {
 
     LinkedHashMap<String,Profile> getProfiles();
 
+    LinkedHashMap<String, Media> getWatched(String profile);
+
+    LinkedHashMap<String, Integer> getRated(String profile);
+
     void login(Device device);
 
     Device disconnect();
 
     Device logout();
+
     Plan getPlan();
 
     void changePlan(Plan newPlan);
@@ -27,5 +34,17 @@ public interface Account {
     void addNormalProfile(String name);
 
     void addChildProfile(String name, int age);
+
+    void logProfile(String name);
+
+    Profile getCurrentProfile();
+
+    Profile getProfile(String name);
+
+    void watch(Media show);
+
+    void rate(String media, int rating);
+
+
 
 }

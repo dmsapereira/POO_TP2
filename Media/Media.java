@@ -3,8 +3,6 @@ import java.util.Set;
 
 public interface Media {
 
-    String getName();
-
     String getDirector();
 
     int getAgeRating();

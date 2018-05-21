@@ -22,7 +22,7 @@ public interface Streaming {
 
     Account getLoggedAccount()throws NullLoggedAccountException;
 
-    void checkPlanChange(Plan newplan) throws DuplicatePlanException,PlanLimitationOverflowException;
+    void changePlan(Plan newplan) throws NullLoggedAccountException,DuplicatePlanException,PlanLimitationOverflowException;
 
     Iterator<Media> getMedia();
 
@@ -35,4 +35,10 @@ public interface Streaming {
     void addStandardProfile(String name) throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException;
 
     void addChildProfile(String name,int ageRating) throws NullLoggedAccountException,DuplicateProfileException,ProfileLimitationOverflowException;
+
+    void selectProfile(String name) throws NullProfileException, NullLoggedAccountException;
+
+    void watch(String media) throws NullLoggedAccountException,NullLoggedProfileException, NullMediaException, AgeRatingMismatchException;
+
+    void rate(String media, int rating) throws NullLoggedAccountException, NullLoggedProfileException, NullMediaException, NullWatchedMediaException, DuplicateRatedMediaException;
 }

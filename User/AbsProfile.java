@@ -1,23 +1,37 @@
 package User;
-import Media.Show;
+
+import Media.*;
+
 import java.util.*;
 
 public class AbsProfile implements Profile {
-    private Set<Show> watchedShows;
+    private LinkedHashMap<String, Media> watchedMedia;
+    private LinkedHashMap<String, Integer> ratedMedia;
     private String name;
 
-    public AbsProfile(String name){
-        watchedShows=new LinkedHashSet<>();
-        this.name=name;
+    public AbsProfile(String name) {
+        watchedMedia = new LinkedHashMap<>();
+        ratedMedia = new LinkedHashMap<>();
+        this.name = name;
     }
 
     @Override
-    public Set<Show> getWatched() {
-        return null;
+    public LinkedHashMap<String, Media> getWatched() {
+        return watchedMedia;
     }
 
     @Override
-    public void watch(Show show) {
+    public LinkedHashMap<String, Integer> getRated() { return ratedMedia; }
 
+    @Override
+    public void watch(Media media) {
+        watchedMedia.put(media.toString(), media);
     }
+
+    @Override
+    public void rateMedia(String name, int rating) {
+        ratedMedia.put(name, rating);
+    }
+
+    public String toString(){ return this.name;}
 }

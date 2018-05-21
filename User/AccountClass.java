@@ -1,5 +1,7 @@
 package User;
 
+import Media.*;
+
 import java.util.*;
 
 public class AccountClass implements Account {
@@ -7,6 +9,7 @@ public class AccountClass implements Account {
     private Plan plan;
     private String email, password, name;
     private Device loggedDevice;
+    private Profile currentProfile;
     private LinkedHashMap<String, Device> devices;
     private LinkedHashMap<String, Profile> profiles;
 
@@ -48,6 +51,16 @@ public class AccountClass implements Account {
     }
 
     @Override
+    public LinkedHashMap<String, Media> getWatched(String profile) {
+        return profiles.get(profile).getWatched();
+    }
+
+    @Override
+    public LinkedHashMap<String, Integer> getRated(String profile) {
+        return profiles.get(profile).getRated();
+    }
+
+    @Override
     public void login(Device device) {
         if (!devices.containsValue(device))
             devices.put(device.getName(), device);
@@ -59,6 +72,7 @@ public class AccountClass implements Account {
         Device removedDevice = loggedDevice;
         devices.remove(loggedDevice.getName());
         loggedDevice = null;
+        currentProfile=null;
         return removedDevice;
     }
 
@@ -66,6 +80,7 @@ public class AccountClass implements Account {
     public Device logout() {
         Device currentDevice = loggedDevice;
         loggedDevice = null;
+        currentProfile=null;
         return currentDevice;
     }
 
@@ -95,6 +110,31 @@ public class AccountClass implements Account {
     public void addChildProfile(String name, int age) {
         profiles.put(name, new KidProfileClass(name, age));
 
+    }
+
+    @Override
+    public void logProfile(String name) {
+        currentProfile=profiles.get(name);
+    }
+
+    @Override
+    public Profile getCurrentProfile() {
+        return currentProfile;
+    }
+
+    @Override
+    public Profile getProfile(String name) {
+        return profiles.get(name);
+    }
+
+    @Override
+    public void watch(Media media) {
+        currentProfile.watch(media);
+    }
+
+    @Override
+    public void rate(String media, int rating) {
+        currentProfile.rateMedia(media,rating);
     }
 
     @Override
