@@ -6,6 +6,6 @@ public class AgeRatingMismatchException extends Exception {
     }
 
     public String toString(){
-        return "Show not available";
+        return "Show not available.";
     }
 }

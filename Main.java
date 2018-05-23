@@ -192,17 +192,17 @@ public class Main {
     }
 
     private static void printWatched(Profile current) {
-        Media media;
-        Iterator<Media> itera = current.getWatched().values().iterator();
-        if (!itera.hasNext())
+        int numShown=0;
+        Collection<Media> watched=current.getWatched().values();
+        if (watched.size()==0)
             System.out.println("Empty list of recently seen shows.");
         else {
-            while (itera.hasNext()) {
-                media = itera.next();
-                System.out.print(media);
-                if (itera.hasNext())
-                    System.out.print("; ");
-            }
+           for(int i=watched.size()-1;i>=0&&numShown<10;i--){
+               System.out.print(watched.toArray()[i]);
+               numShown++;
+               if(i>0&&numShown<10)
+                   System.out.print("; ");
+           }
             System.out.println(".");
         }
     }

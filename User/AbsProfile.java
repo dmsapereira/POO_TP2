@@ -21,10 +21,16 @@ public class AbsProfile implements Profile {
     }
 
     @Override
-    public LinkedHashMap<String, Integer> getRated() { return ratedMedia; }
+    public LinkedHashMap<String, Integer> getRated() {
+        return ratedMedia;
+    }
 
     @Override
     public void watch(Media media) {
+        if (watchedMedia.containsKey(media.toString()))
+            watchedMedia.remove(media.toString());
+        else if (watchedMedia.size()==10)
+            watchedMedia.remove(watchedMedia.keySet().toArray()[0].toString());
         watchedMedia.put(media.toString(), media);
     }
 
@@ -33,5 +39,7 @@ public class AbsProfile implements Profile {
         ratedMedia.put(name, rating);
     }
 
-    public String toString(){ return this.name;}
+    public String toString() {
+        return this.name;
+    }
 }
