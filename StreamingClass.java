@@ -219,7 +219,7 @@ public class StreamingClass implements Streaming {
     }
 
     @Override
-    public Iterator<Media> searchByName(String name) throws NullLoggedAccountException,NullLoggedProfileException,MediaIterationException { 
+    public Iterator<Media> searchByName(String name) throws NullLoggedAccountException,NullLoggedProfileException,MediaIterationException {
         Media current;
         if(loggedAcc==null)
             throw new NullLoggedAccountException();
@@ -264,6 +264,12 @@ public class StreamingClass implements Streaming {
         }
         if(stack.size()==0)
             throw new MediaIterationException();
+        ratedItera=stack.iterator();
+        while(ratedItera.hasNext()){
+            current=ratedItera.next();
+            if(current.getRating()<rating)
+                stack.remove(current);
+        }
        Collections.sort(stack,new CompareByRating());
         return stack.iterator();
     }

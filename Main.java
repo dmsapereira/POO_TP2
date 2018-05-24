@@ -129,10 +129,10 @@ public class Main {
                     searchByGenre(in,system);
                     break;
                 case SEARCHBYNAME:
-                    //TODO
+                    searchByName(in,system);
                     break;
                 case SEARCHBYRATE:
-                    //TODO
+                    searchByRate(in,system);
                     break;
                 case UPLOAD:
                 case UNKNOWN:
@@ -145,23 +145,37 @@ public class Main {
         } while (!option.equals(Command.EXIT));
     }
 
+    private static void searchByRate(Scanner in, Streaming system) {
+        int rating=in.nextInt();
+        in.nextLine();
+        try {
+            Iterator<Rated> itera = system.searchByRating(rating);
+            while (itera.hasNext())
+                printRatedMedia(itera.next());
+        }catch (NullLoggedAccountException | NullLoggedProfileException | MediaIterationException e){
+            System.out.println(e);
+        }
+    }
+
+    private static void searchByName(Scanner in, Streaming system) {
+        String name=in.nextLine();
+        try {
+            Iterator<Media> itera = system.searchByName(name);
+            while (itera.hasNext())
+                printMediaFullCast(itera.next());
+        }catch (NullLoggedAccountException | NullLoggedProfileException | MediaIterationException e){
+            System.out.println(e);
+        }
+    }
+
     private static void searchByGenre(Scanner in, Streaming system) {
-        Media current;
-        int auxCast;
-        String genre=in.nextLine();
-        Iterator<Media> itera=system.searchByGenre(genre);
-        while(itera.hasNext()){
-            current=itera.next();
-            if (current instanceof Movie)
-                System.out.printf(FORMAT_MOVIE, current, current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());
-            else
-                System.out.printf(FORMAT_SHOW, current, current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());
-            auxCast = 0;
-            while (itera.hasNext() && auxCast < 3) {
-                System.out.print("; " + itera.next());
-                auxCast++;
-            }
-            System.out.println(".");
+        String genre=in.nextLine().trim();
+        try {
+            Iterator<Media> itera = system.searchByGenre(genre);
+            while (itera.hasNext())
+                printMediaFullCast(itera.next());
+        }catch (NullLoggedAccountException | NullLoggedProfileException | MediaIterationException e){
+            System.out.println(e);
         }
     }
 
@@ -204,7 +218,7 @@ public class Main {
         if(itera.hasNext()){
             while (itera.hasNext()) {
                 rated=itera.next();
-                System.out.print(rated + " (" + rated.getRating() + ")");
+                System.out.print(rated + " (" + ((int)rated.getRating()) + ")");
                 if (itera.hasNext())
                     System.out.print("; ");
             }
@@ -353,10 +367,7 @@ public class Main {
     }
 
     private static void upload(Scanner in, Streaming system) {
-        int auxCast;
-        Iterator<String> itera;
         Iterator<Media> iteraMedia;
-        Media current;
         int numAux = in.nextInt();
         in.nextLine();
         for (int i = 0; i < numAux; i++) {
@@ -370,20 +381,8 @@ public class Main {
         System.out.println();
         System.out.println("Database was updated:");
         iteraMedia = system.getMedia();
-        while (iteraMedia.hasNext()) {
-            current = iteraMedia.next();
-            itera = current.getCast().iterator();
-            if (current instanceof Movie)
-                System.out.printf(FORMAT_MOVIE, current, current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());
-            else
-                System.out.printf(FORMAT_SHOW, current, current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());
-            auxCast = 0;
-            while (itera.hasNext() && auxCast < 3) {
-                System.out.print("; " + itera.next());
-                auxCast++;
-            }
-            System.out.println(".");
-        }
+        while (iteraMedia.hasNext())
+            printMedia(iteraMedia.next());
     }
 
     private static void readShow(Scanner in, Streaming system) {
@@ -432,6 +431,48 @@ public class Main {
             cast.add(collabName);
         }
         system.uploadMovie(name, director, duration, ageRating, debut, genre, cast);
+    }
+
+    private static void printMediaFullCast(Media media){
+        Iterator<String>itera = media.getCast().iterator();
+        if (media instanceof Movie)
+            System.out.printf(FORMAT_MOVIE, media, media.getDirector(), ((Movie) media).getDuration(), media.getAgeRating(), media.getDebut(), media.getGenre());
+        else
+            System.out.printf(FORMAT_SHOW, media, media.getDirector(), ((Show) media).getNumSeasons(), ((Show) media).getNumEpisodes(), media.getAgeRating(), media.getDebut(), media.getGenre());
+        while (itera.hasNext())
+            System.out.print("; " + itera.next());
+        System.out.println(".");
+    }
+
+    private static void printMedia(Media media){
+        int auxCast;
+        Iterator<String>itera = media.getCast().iterator();
+        if (media instanceof Movie)
+            System.out.printf(FORMAT_MOVIE, media, media.getDirector(), ((Movie) media).getDuration(), media.getAgeRating(), media.getDebut(), media.getGenre());
+        else
+            System.out.printf(FORMAT_SHOW, media, media.getDirector(), ((Show) media).getNumSeasons(), ((Show) media).getNumEpisodes(), media.getAgeRating(), media.getDebut(), media.getGenre());
+        auxCast = 0;
+        while (itera.hasNext() && auxCast < 3) {
+            System.out.print("; " + itera.next());
+            auxCast++;
+        }
+        System.out.println(".");
+    }
+
+    private static void printRatedMedia(Media media){
+        int auxCast;
+        Iterator<String>itera = media.getCast().iterator();
+        if (media instanceof Movie)
+            System.out.printf(FORMAT_MOVIE, media, media.getDirector(), ((Movie) media).getDuration(), media.getAgeRating(), media.getDebut(), media.getGenre());
+        else
+            System.out.printf(FORMAT_SHOW, media, media.getDirector(), ((Show) media).getNumSeasons(), ((Show) media).getNumEpisodes(), media.getAgeRating(), media.getDebut(), media.getGenre());
+        auxCast = 0;
+        while (itera.hasNext() && auxCast < 3) {
+            System.out.print("; " + itera.next());
+            auxCast++;
+        }
+        System.out.printf(" [%.1f]\n",((Rated)media).getRating());
+        System.out.println(".");
     }
 
 
