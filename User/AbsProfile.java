@@ -6,7 +6,7 @@ import java.util.*;
 
 public class AbsProfile implements Profile {
     private LinkedHashMap<String, Media> watchedMedia;
-    private LinkedHashMap<String, Integer> ratedMedia;
+    private LinkedHashMap<String, Rated> ratedMedia;
     private String name;
 
     public AbsProfile(String name) {
@@ -21,7 +21,7 @@ public class AbsProfile implements Profile {
     }
 
     @Override
-    public LinkedHashMap<String, Integer> getRated() {
+    public LinkedHashMap<String, Rated> getRated() {
         return ratedMedia;
     }
 
@@ -36,7 +36,11 @@ public class AbsProfile implements Profile {
 
     @Override
     public void rateMedia(String name, int rating) {
-        ratedMedia.put(name, rating);
+        Media media= watchedMedia.get(name);
+        if(media instanceof Show)
+            ratedMedia.put(name,new RatedShow((Show)media,rating));
+        else
+            ratedMedia.put(name, new RatedMovie((Movie)media,rating));
     }
 
     public String toString() {

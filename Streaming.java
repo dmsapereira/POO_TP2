@@ -41,4 +41,10 @@ public interface Streaming {
     void watch(String media) throws NullLoggedAccountException,NullLoggedProfileException, NullMediaException, AgeRatingMismatchException;
 
     void rate(String media, int rating) throws NullLoggedAccountException, NullLoggedProfileException, NullMediaException, NullWatchedMediaException, DuplicateRatedMediaException;
+
+    Iterator<Media> searchByGenre(String genre) throws NullLoggedAccountException, NullLoggedProfileException, MediaIterationException;
+
+    Iterator<Media> searchByName(String name) throws NullLoggedAccountException,NullLoggedProfileException,MediaIterationException;
+
+    Iterator<Rated> searchByRating(int rating) throws NullLoggedAccountException, NullLoggedProfileException,MediaIterationException;
 }

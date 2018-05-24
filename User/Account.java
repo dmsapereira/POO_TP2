@@ -17,7 +17,7 @@ public interface Account {
 
     LinkedHashMap<String, Media> getWatched(String profile);
 
-    LinkedHashMap<String, Integer> getRated(String profile);
+    LinkedHashMap<String, Rated> getRated(String profile);
 
     void login(Device device);
 

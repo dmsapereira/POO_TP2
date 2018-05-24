@@ -1,5 +1,8 @@
 import java.util.*;
 
+import Comparators.CompareByDebut;
+import Comparators.CompareByRating;
+import Comparators.CompareByTitle;
 import Exceptions.*;
 import Media.*;
 import User.*;
@@ -192,5 +195,76 @@ public class StreamingClass implements Streaming {
         loggedAcc.rate(media,rating);
     }
 
+    @Override
+    public Iterator<Media> searchByGenre(String genre) throws NullLoggedAccountException,NullLoggedProfileException,MediaIterationException {
+        Media current;
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getCurrentProfile()==null)
+            throw new NullLoggedProfileException();
+        ArrayList<Media> list=new ArrayList<Media>();
+        Iterator<Media> itera= getMedia();
+        while(itera.hasNext()){
+            current=itera.next();
+            if(current.getGenre().equals(genre))
+                list.add(current);
+        }
+        if(list.size()==0)
+            throw new MediaIterationException();
+        Collections.sort(list,new CompareByTitle());
+        return list.iterator();
 
+
+
+    }
+
+    @Override
+    public Iterator<Media> searchByName(String name) throws NullLoggedAccountException,NullLoggedProfileException,MediaIterationException { 
+        Media current;
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getCurrentProfile()==null)
+            throw new NullLoggedProfileException();
+        ArrayList<Media> list=new ArrayList<Media>();
+        Iterator<Media> itera=getMedia();
+        while(itera.hasNext()){
+            current=itera.next();
+            if(current.getCast().contains(name))
+                list.add(current);
+        }
+        if(list.size()==0)
+            throw new MediaIterationException();
+        Collections.sort(list,new CompareByDebut());
+        return list.iterator();
+    }
+
+    @Override
+    public Iterator<Rated> searchByRating(int rating) throws NullLoggedAccountException,NullLoggedProfileException, MediaIterationException {
+        Rated current;
+        if(loggedAcc==null)
+            throw new NullLoggedAccountException();
+        if(loggedAcc.getCurrentProfile()==null)
+            throw new NullLoggedProfileException();
+        Iterator<Rated> ratedItera;
+        Iterator<Profile> profileItera;
+        ArrayList<Rated> stack=new ArrayList<Rated>();
+        Iterator<Account> accountItera=accountMap.values().iterator();
+        while(accountItera.hasNext()){
+            profileItera=accountItera.next().getProfiles().values().iterator();
+            while(profileItera.hasNext()){
+                ratedItera=profileItera.next().getRated().values().iterator();
+                while(ratedItera.hasNext()){
+                    current=ratedItera.next();
+                    if(stack.contains(current))
+                        stack.get(stack.lastIndexOf(current)).addRating((int)current.getRating());
+                    else
+                        stack.add(current);
+                }
+            }
+        }
+        if(stack.size()==0)
+            throw new MediaIterationException();
+       Collections.sort(stack,new CompareByRating());
+        return stack.iterator();
+    }
 }

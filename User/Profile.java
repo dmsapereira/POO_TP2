@@ -6,7 +6,7 @@ public interface Profile {
 
     LinkedHashMap<String,Media> getWatched();
 
-    LinkedHashMap<String,Integer> getRated();
+    LinkedHashMap<String,Rated> getRated();
 
     void watch(Media media);
 

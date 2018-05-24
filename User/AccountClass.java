@@ -56,7 +56,7 @@ public class AccountClass implements Account {
     }
 
     @Override
-    public LinkedHashMap<String, Integer> getRated(String profile) {
+    public LinkedHashMap<String, Rated> getRated(String profile) {
         return profiles.get(profile).getRated();
     }
 

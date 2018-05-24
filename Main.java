@@ -126,7 +126,7 @@ public class Main {
                     infoAccount(system);
                     break;
                 case SEARCHBYGENRE:
-                    //TODO
+                    searchByGenre(in,system);
                     break;
                 case SEARCHBYNAME:
                     //TODO
@@ -143,6 +143,26 @@ public class Main {
             }
             System.out.println();
         } while (!option.equals(Command.EXIT));
+    }
+
+    private static void searchByGenre(Scanner in, Streaming system) {
+        Media current;
+        int auxCast;
+        String genre=in.nextLine();
+        Iterator<Media> itera=system.searchByGenre(genre);
+        while(itera.hasNext()){
+            current=itera.next();
+            if (current instanceof Movie)
+                System.out.printf(FORMAT_MOVIE, current, current.getDirector(), ((Movie) current).getDuration(), current.getAgeRating(), current.getDebut(), current.getGenre());
+            else
+                System.out.printf(FORMAT_SHOW, current, current.getDirector(), ((Show) current).getNumSeasons(), ((Show) current).getNumEpisodes(), current.getAgeRating(), current.getDebut(), current.getGenre());
+            auxCast = 0;
+            while (itera.hasNext() && auxCast < 3) {
+                System.out.print("; " + itera.next());
+                auxCast++;
+            }
+            System.out.println(".");
+        }
     }
 
     private static void infoAccount(Streaming system) {
@@ -179,12 +199,13 @@ public class Main {
     }
 
     private static void printRated(Profile current) {
-        Iterator<Integer> iteraRating = current.getRated().values().iterator();
-        Iterator<String> iteraMedia = current.getRated().keySet().iterator();
-        if(iteraRating.hasNext()) {
-            while (iteraRating.hasNext()) {
-                System.out.print(iteraMedia.next() + " (" + iteraRating.next() + ")");
-                if (iteraRating.hasNext())
+        Rated rated;
+        Iterator<Rated> itera=current.getRated().values().iterator();
+        if(itera.hasNext()){
+            while (itera.hasNext()) {
+                rated=itera.next();
+                System.out.print(rated + " (" + rated.getRating() + ")");
+                if (itera.hasNext())
                     System.out.print("; ");
             }
             System.out.println(".");
