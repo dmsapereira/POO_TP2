@@ -51,23 +51,11 @@ public class Main {
                     selectProfile(in, system);
                     break;
                 case WATCH:
-                    watch(in, system);
-                    break;
                 case RATE:
-                    rate(in, system);
-                    break;
                 case INFOACCOUNT:
-                    infoAccount(system);
-                    break;
                 case SEARCHBYGENRE:
-                    //TODO
-                    break;
                 case SEARCHBYNAME:
-                    //TODO
-                    break;
                 case SEARCHBYRATE:
-                    //TODO
-                    break;
                 case UNKNOWN:
                     System.out.println("Unknown command.");
                     break;
@@ -141,6 +129,7 @@ public class Main {
                 default:
                     break;
             }
+            if(!option.equals(Command.EXIT))
             System.out.println();
         } while (!option.equals(Command.EXIT));
     }
@@ -460,19 +449,15 @@ public class Main {
     }
 
     private static void printRatedMedia(Media media){
-        int auxCast;
         Iterator<String>itera = media.getCast().iterator();
         if (media instanceof Movie)
             System.out.printf(FORMAT_MOVIE, media, media.getDirector(), ((Movie) media).getDuration(), media.getAgeRating(), media.getDebut(), media.getGenre());
         else
             System.out.printf(FORMAT_SHOW, media, media.getDirector(), ((Show) media).getNumSeasons(), ((Show) media).getNumEpisodes(), media.getAgeRating(), media.getDebut(), media.getGenre());
-        auxCast = 0;
-        while (itera.hasNext() && auxCast < 3) {
+        while (itera.hasNext())
             System.out.print("; " + itera.next());
-            auxCast++;
-        }
+        System.out.print(".");
         System.out.printf(" [%.1f]\n",((Rated)media).getRating());
-        System.out.println(".");
     }
 
 

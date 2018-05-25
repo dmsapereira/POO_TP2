@@ -229,7 +229,7 @@ public class StreamingClass implements Streaming {
         Iterator<Media> itera=getMedia();
         while(itera.hasNext()){
             current=itera.next();
-            if(current.getCast().contains(name))
+            if(current.getCast().contains(name)||current.getDirector().equals(name))
                 list.add(current);
         }
         if(list.size()==0)
@@ -241,36 +241,46 @@ public class StreamingClass implements Streaming {
     @Override
     public Iterator<Rated> searchByRating(int rating) throws NullLoggedAccountException,NullLoggedProfileException, MediaIterationException {
         Rated current;
+        Profile currentProfile;
+        Iterator<Rated> ratedItera;
+        Iterator<Profile> profileItera;
         if(loggedAcc==null)
             throw new NullLoggedAccountException();
         if(loggedAcc.getCurrentProfile()==null)
             throw new NullLoggedProfileException();
-        Iterator<Rated> ratedItera;
-        Iterator<Profile> profileItera;
-        ArrayList<Rated> stack=new ArrayList<Rated>();
+        ArrayList<Rated> firstStack=new ArrayList<>();
+        ArrayList<Rated> finalStack=new ArrayList<>();
         Iterator<Account> accountItera=accountMap.values().iterator();
         while(accountItera.hasNext()){
             profileItera=accountItera.next().getProfiles().values().iterator();
             while(profileItera.hasNext()){
-                ratedItera=profileItera.next().getRated().values().iterator();
+                currentProfile=profileItera.next();
+                ratedItera=currentProfile.getRated().values().iterator();
                 while(ratedItera.hasNext()){
                     current=ratedItera.next();
-                    if(stack.contains(current))
-                        stack.get(stack.lastIndexOf(current)).addRating((int)current.getRating());
-                    else
-                        stack.add(current);
+                    if(!(loggedAcc.getCurrentProfile() instanceof KidProfile)||(loggedAcc.getCurrentProfile() instanceof KidProfile && (current.getAgeRating()<=((KidProfile) loggedAcc.getCurrentProfile()).getAgeRating()))) {
+                        if (firstStack.contains(current))
+                            firstStack.get(firstStack.lastIndexOf(current)).addRating((int)current.getRating());
+                        else{
+                            if(current instanceof Show)
+                                firstStack.add(new RatedShow((RatedShow)current));
+                            else
+                                firstStack.add(new RatedMovie((RatedMovie)current));
+                        }
+
+                    }
                 }
             }
         }
-        if(stack.size()==0)
-            throw new MediaIterationException();
-        ratedItera=stack.iterator();
+        ratedItera=firstStack.iterator();
         while(ratedItera.hasNext()){
             current=ratedItera.next();
-            if(current.getRating()<rating)
-                stack.remove(current);
+            if(current.getRating()>=rating)
+                finalStack.add(current);
         }
-       Collections.sort(stack,new CompareByRating());
-        return stack.iterator();
+        if(finalStack.size()==0)
+            throw new MediaIterationException();
+       Collections.sort(finalStack,new CompareByRating());
+        return finalStack.iterator();
     }
 }
