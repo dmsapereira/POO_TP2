@@ -248,8 +248,8 @@ public class StreamingClass implements Streaming {
             throw new NullLoggedAccountException();
         if(loggedAcc.getCurrentProfile()==null)
             throw new NullLoggedProfileException();
-        ArrayList<Rated> firstStack=new ArrayList<>();
-        ArrayList<Rated> finalStack=new ArrayList<>();
+        LinkedHashMap<String,Rated> firstStack=new LinkedHashMap<>();
+        TreeSet<Rated> finalStack=new TreeSet<>(new CompareByRating());
         Iterator<Account> accountItera=accountMap.values().iterator();
         while(accountItera.hasNext()){
             profileItera=accountItera.next().getProfiles().values().iterator();
@@ -259,20 +259,20 @@ public class StreamingClass implements Streaming {
                 while(ratedItera.hasNext()){
                     current=ratedItera.next();
                     if(!(loggedAcc.getCurrentProfile() instanceof KidProfile)||(loggedAcc.getCurrentProfile() instanceof KidProfile && (current.getAgeRating()<=((KidProfile) loggedAcc.getCurrentProfile()).getAgeRating()))) {
-                        if (firstStack.contains(current))
-                            firstStack.get(firstStack.lastIndexOf(current)).addRating((int)current.getRating());
+                        if (firstStack.containsKey(current.toString()))
+                            firstStack.get(current.toString()).addRating((int)current.getRating());
                         else{
                             if(current instanceof Show)
-                                firstStack.add(new RatedShow((RatedShow)current));
+                                firstStack.put(current.toString(),new RatedShow((RatedShow)current));
                             else
-                                firstStack.add(new RatedMovie((RatedMovie)current));
+                                firstStack.put(current.toString(),(new RatedMovie((RatedMovie)current)));
                         }
 
                     }
                 }
             }
         }
-        ratedItera=firstStack.iterator();
+        ratedItera=firstStack.values().iterator();
         while(ratedItera.hasNext()){
             current=ratedItera.next();
             if(current.getRating()>=rating)
@@ -280,7 +280,6 @@ public class StreamingClass implements Streaming {
         }
         if(finalStack.size()==0)
             throw new MediaIterationException();
-       Collections.sort(finalStack,new CompareByRating());
         return finalStack.iterator();
     }
 }
