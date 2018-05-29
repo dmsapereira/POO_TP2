@@ -1,8 +1,9 @@
-package User;
+package AbsProfileTest.User;
 
 import Media.AbsMedia;
 import Media.MovieClass;
 import Media.ShowClass;
+import User.AbsProfile;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.LinkedHashSet;

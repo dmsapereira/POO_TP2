@@ -6,7 +6,7 @@ import java.util.Set;
 public class AbsMedia implements Media,Comparable<Media> {
     private String name,directorName,genre;
     private int ageRating,debutDate;
-    private Set<String> cast;
+    private Set<String> cast;//A Set has been used for it's ease of Iteration and preservation of insertion order (we use a LinkedHashSet)
 
 
     public AbsMedia(String name, String directorName, int ageRating, int debutDate, String genre, Set<String> cast ){
@@ -18,7 +18,7 @@ public class AbsMedia implements Media,Comparable<Media> {
         this.cast=cast;
     }
 
-    public String toString(){ return this.name;}
+    public String toString(){ return this.name;}//facilitates print methods
 
     @Override
     public String getDirector() {

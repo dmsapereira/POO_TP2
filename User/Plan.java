@@ -1,5 +1,8 @@
 package User;
 
+/**
+ * An <code>Enum</code> for the available <code>Plan</code>s
+ */
 public enum Plan {
     BASIC(1,2,"Basic"), STANDARD(2,5,"Standard"), PREMIUM(4,5,"Premium");
 

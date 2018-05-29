@@ -105,32 +105,6 @@ public class StreamingClass implements Streaming {
     }
 
     @Override
-    public Iterator<Show> getShows() {
-        Media current;
-        Set<Show> aux = new LinkedHashSet<Show>(media.size());
-        Iterator<Media> itera = media.values().iterator();
-        while (itera.hasNext()) {
-            current = itera.next();
-            if (current instanceof Show)
-                aux.add((Show) current);
-        }
-        return aux.iterator();
-    }
-
-    @Override
-    public Iterator<Movie> getMovies() {
-        Media current;
-        Set<Movie> aux = new LinkedHashSet<Movie>(media.size());
-        Iterator<Media> itera = media.values().iterator();
-        while (itera.hasNext()) {
-            current = itera.next();
-            if (current instanceof Movie)
-                aux.add((Movie) current);
-        }
-        return aux.iterator();
-    }
-
-    @Override
     public Account getAccount(String email) {
         return accountMap.get(email);
     }
@@ -202,7 +176,8 @@ public class StreamingClass implements Streaming {
             throw new NullLoggedAccountException();
         if(loggedAcc.getCurrentProfile()==null)
             throw new NullLoggedProfileException();
-        ArrayList<Media> list=new ArrayList<Media>();
+        Set<Media> list=new TreeSet<Media>(new CompareByTitle()) {
+        };
         Iterator<Media> itera= getMedia();
         while(itera.hasNext()){
             current=itera.next();
@@ -211,7 +186,6 @@ public class StreamingClass implements Streaming {
         }
         if(list.size()==0)
             throw new MediaIterationException();
-        Collections.sort(list,new CompareByTitle());
         return list.iterator();
 
 
@@ -225,7 +199,7 @@ public class StreamingClass implements Streaming {
             throw new NullLoggedAccountException();
         if(loggedAcc.getCurrentProfile()==null)
             throw new NullLoggedProfileException();
-        ArrayList<Media> list=new ArrayList<Media>();
+        Set<Media> list=new TreeSet<Media>(new CompareByDebut());
         Iterator<Media> itera=getMedia();
         while(itera.hasNext()){
             current=itera.next();
@@ -234,7 +208,6 @@ public class StreamingClass implements Streaming {
         }
         if(list.size()==0)
             throw new MediaIterationException();
-        Collections.sort(list,new CompareByDebut());
         return list.iterator();
     }
 

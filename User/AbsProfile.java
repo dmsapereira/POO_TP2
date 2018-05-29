@@ -5,7 +5,7 @@ import Media.*;
 import java.util.*;
 
 public class AbsProfile implements Profile {
-    private LinkedHashMap<String, Media> watchedMedia;
+    private LinkedHashMap<String, Media> watchedMedia;//LinkedHashMap has been used for it's ability to return specific values easily and it's preservation of the insertion order
     private LinkedHashMap<String, Rated> ratedMedia;
     private String name;
 
@@ -29,21 +29,21 @@ public class AbsProfile implements Profile {
     public void watch(Media media) {
         if (watchedMedia.containsKey(media.toString()))
             watchedMedia.remove(media.toString());
-        else if (watchedMedia.size()==10)
+        else if (watchedMedia.size() == 10)
             watchedMedia.remove(watchedMedia.keySet().toArray()[0].toString());
         watchedMedia.put(media.toString(), media);
     }
 
     @Override
     public void rateMedia(String name, int rating) {
-        Media media= watchedMedia.get(name);
-        if(media instanceof Show)
-            ratedMedia.put(name,new RatedShow((Show)media,rating));
+        Media media = watchedMedia.get(name);
+        if (media instanceof Show)
+            ratedMedia.put(name, new RatedShow((Show) media, rating));
         else
-            ratedMedia.put(name, new RatedMovie((Movie)media,rating));
+            ratedMedia.put(name, new RatedMovie((Movie) media, rating));
     }
-        //change method name to getName();
+
     public String toString() {
         return this.name;
-    }
+    }//facilitates print methods
 }

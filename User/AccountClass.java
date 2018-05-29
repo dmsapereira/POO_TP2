@@ -10,7 +10,7 @@ public class AccountClass implements Account {
     private String email, password, name;
     private Device loggedDevice;
     private Profile currentProfile;
-    private LinkedHashMap<String, Device> devices;
+    private LinkedHashMap<String, Device> devices;//LinkedHashMap for it's ease of returning specific values and preservation of insertion order
     private LinkedHashMap<String, Profile> profiles;
 
     public AccountClass(String name, String email, String password, Device device) {
@@ -41,23 +41,8 @@ public class AccountClass implements Account {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public LinkedHashMap<String, Profile> getProfiles() {
         return profiles;
-    }
-
-    @Override
-    public LinkedHashMap<String, Media> getWatched(String profile) {
-        return profiles.get(profile).getWatched();
-    }
-
-    @Override
-    public LinkedHashMap<String, Rated> getRated(String profile) {
-        return profiles.get(profile).getRated();
     }
 
     @Override
@@ -120,11 +105,6 @@ public class AccountClass implements Account {
     @Override
     public Profile getCurrentProfile() {
         return currentProfile;
-    }
-
-    @Override
-    public Profile getProfile(String name) {
-        return profiles.get(name);
     }
 
     @Override
