@@ -5,45 +5,63 @@ import Media.*;
 import java.util.*;
 
 public class AbsProfile implements Profile {
-    private LinkedHashMap<String, Media> watchedMedia;//LinkedHashMap has been used for it's ability to return specific values easily and it's preservation of the insertion order
-    private LinkedHashMap<String, Rated> ratedMedia;
+    private LinkedList<Media> watchedMedia;//LinkedList has been used for it's ability to return specific values easily and it's preservation of the insertion order
+    private LinkedList<Rated> ratedMedia;
     private String name;
 
     public AbsProfile(String name) {
-        watchedMedia = new LinkedHashMap<>();
-        ratedMedia = new LinkedHashMap<>();
+        watchedMedia = new LinkedList<Media>();
+        ratedMedia = new LinkedList<Rated>();
         this.name = name;
     }
 
     @Override
-    public LinkedHashMap<String, Media> getWatched() {
+    public LinkedList<Media> getWatched() {
         return watchedMedia;
     }
 
     @Override
-    public LinkedHashMap<String, Rated> getRated() {
+    public LinkedList<Rated> getRated() {
         return ratedMedia;
     }
 
     @Override
     public void watch(Media media) {
-        if (watchedMedia.containsKey(media.toString()))
-            watchedMedia.remove(media.toString());
+        if (watchedMedia.contains(media))
+            watchedMedia.remove(media);
         else if (watchedMedia.size() == 10)
-            watchedMedia.remove(watchedMedia.keySet().toArray()[0].toString());
-        watchedMedia.put(media.toString(), media);
+            watchedMedia.remove(0);
+        watchedMedia.add(media);
     }
 
     @Override
     public void rateMedia(String name, int rating) {
-        Media media = watchedMedia.get(name);
+        Media media = getWatchedMediaByName(name);
         if (media instanceof Show)
-            ratedMedia.put(name, new RatedShow((Show) media, rating));
+            ratedMedia.add(new RatedShow((Show) media, rating));
         else
-            ratedMedia.put(name, new RatedMovie((Movie) media, rating));
+            ratedMedia.add(new RatedMovie((Movie) media, rating));
     }
 
     public String toString() {
         return this.name;
     }//facilitates print methods
+
+    @Override
+    public Media getWatchedMediaByName(String name) {
+        for (Media current : watchedMedia) {
+            if (current.toString().equals(name))
+                return current;
+        }
+        return null;
+    }
+
+    @Override
+    public Media getRatedMediaByName(String name) {
+        for (Media current : ratedMedia) {
+            if (current.toString().equals(name))
+                return current;
+        }
+        return null;
+    }
 }

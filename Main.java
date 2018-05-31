@@ -215,7 +215,7 @@ public class Main {
      */
     private static void printProfiles(Account account) {
         Profile current;
-        Iterator<Profile> itera = account.getProfiles().values().iterator();
+        Iterator<Profile> itera = account.getProfiles().iterator();
         if (!itera.hasNext())
             System.out.println("No profiles defined.");
         else {
@@ -238,7 +238,7 @@ public class Main {
      */
     private static void printRated(Profile current) {
         Rated rated;
-        Iterator<Rated> itera=current.getRated().values().iterator();
+        Iterator<Rated> itera=current.getRated().iterator();
         if(itera.hasNext()){
             while (itera.hasNext()) {
                 rated=itera.next();
@@ -255,7 +255,7 @@ public class Main {
      */
     private static void printWatched(Profile current) {
         int numShown=0;
-        Collection<Media> watched=current.getWatched().values();
+        Collection<Media> watched=current.getWatched();
         if (watched.size()==0)
             System.out.println("Empty list of recently seen shows.");
         else {
@@ -273,7 +273,7 @@ public class Main {
      *Prints a list of <code>Device</code>s
      * */
     private static void printDevices(Account account) {
-        Iterator<Device> deviceItera = account.getDevices().values().iterator();
+        Iterator<Device> deviceItera = account.getDevices().iterator();
         while (deviceItera.hasNext()) {
             System.out.print(deviceItera.next());
             if (deviceItera.hasNext())
@@ -459,7 +459,7 @@ public class Main {
     private static void readShow(Scanner in, Streaming system) {
         String name, director, genre, collabName, ageString;
         int numEpisodes, numSeasons, debut, numCast;
-        Set<String> cast = new LinkedHashSet<>();
+        LinkedList<String> cast = new LinkedList<>();
         name = in.nextLine();
         director = in.nextLine();
         numSeasons = in.nextInt();
@@ -487,7 +487,7 @@ public class Main {
     private static void readMovie(Scanner in, Streaming system) {
         String name, director, genre, ageString, collabName;
         int duration, debut, numCast;
-        Set<String> cast = new LinkedHashSet<>();
+        LinkedList<String> cast = new LinkedList<>();
         name = in.nextLine();
         director = in.nextLine();
         duration = in.nextInt();

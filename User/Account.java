@@ -21,16 +21,16 @@ public interface Account {
     String getPassword();
 
     /**
-     * Returns the LinkedHashMap containing the <code>Device</code>s that are in use
-     * @return LinkedHashMap containing <code>Device</code>s
+     * Returns the <code>LinkedList</code> containing the <code>Device</code>s that are in use
+     * @return <code>LinkedList</code> containing <code>Device</code>s
      */
-    LinkedHashMap<String,Device> getDevices();
+    LinkedList<Device> getDevices();
 
     /**
-     * Returns the LinkedHashMap containing the <code>Profile</code>s
-     * @return LinkedHashMap contaning the <code>Profile</code>s
+     * Returns the <code>LinkedList</code> containing the <code>Profile</code>s
+     * @return <code>LinkedList</code> containing <code>Profile</code>s
      */
-    LinkedHashMap<String,Profile> getProfiles();
+    LinkedList<Profile> getProfiles();
 
     /**
      * Logs in on a <code>Device</code>, If it's the first time, adds it to <code>Set</code>
@@ -115,6 +115,12 @@ public interface Account {
      */
     void rate(String media, int rating);
 
+    /**
+     * Searches for a <code>Profile</code> with the given name
+     * @param name <code>Profile</code>'s name to search for
+     * @return <code>Profile</code> with the given name
+     */
+    Profile searchProfileByName(String name);
 
 
 }

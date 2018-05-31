@@ -1,4 +1,4 @@
-import java.util.*;
+
 
 import Comparators.CompareByDebut;
 import Comparators.CompareByRating;
@@ -6,6 +6,8 @@ import Comparators.CompareByTitle;
 import Exceptions.*;
 import Media.*;
 import User.*;
+
+import java.util.*;
 
 public class StreamingClass implements Streaming {
 
@@ -15,7 +17,7 @@ public class StreamingClass implements Streaming {
 
     public StreamingClass() {
         this.media = new TreeMap<>();
-        this.accountMap = new LinkedHashMap<>();
+        this.accountMap = new HashMap<>();
     }
 
 
@@ -43,7 +45,7 @@ public class StreamingClass implements Streaming {
         if (!aux.getPassword().equals(password))
             throw new WrongPasswordException();
         newDevice = new DeviceClass(device);
-        if (aux.getMaxDevices() == aux.getDevices().size() && !aux.getDevices().containsKey(device))
+        if (aux.getMaxDevices() == aux.getDevices().size() && !(aux.getDevices().contains(new DeviceClass(device))))
             throw new DeviceCapacityException();
         loggedAcc = aux;
         loggedAcc.login(newDevice);
@@ -51,13 +53,13 @@ public class StreamingClass implements Streaming {
 
     @Override
     public void uploadMovie(String name, String directorName, int duration, int ageRating, int debutDate, String
-            genre, Set<String> cast) {
+            genre, LinkedList<String> cast) {
         media.put(name, new MovieClass(name, directorName, duration, ageRating, debutDate, genre, cast));
     }
 
     @Override
     public void uploadShow(String name, String directorName, int numSeasons, int numEpisodes, int ageRating,
-                           int debutDate, String genre, Set<String> cast) {
+                           int debutDate, String genre, LinkedList<String> cast) {
         media.put(name, new ShowClass(name, directorName, numSeasons, numEpisodes, ageRating, debutDate, genre, cast));
     }
 
@@ -113,7 +115,7 @@ public class StreamingClass implements Streaming {
     public void addStandardProfile(String name) throws NullLoggedAccountException, DuplicateProfileException, ProfileLimitationOverflowException {
         if (loggedAcc == null)
             throw new NullLoggedAccountException();
-        if (loggedAcc.getProfiles().containsKey(name))
+        if (loggedAcc.getProfiles().contains(loggedAcc.searchProfileByName(name)))
             throw new DuplicateProfileException(name);
         if (loggedAcc.getProfiles().size() >= loggedAcc.getPlan().getProfileNum())
             throw new ProfileLimitationOverflowException();
@@ -124,7 +126,7 @@ public class StreamingClass implements Streaming {
     public void addChildProfile(String name, int ageRating) throws NullLoggedAccountException, DuplicateProfileException, ProfileLimitationOverflowException {
         if (loggedAcc == null)
             throw new NullLoggedAccountException();
-        if (loggedAcc.getProfiles().containsKey(name))
+        if (loggedAcc.getProfiles().contains(loggedAcc.searchProfileByName(name)))
             throw new DuplicateProfileException(name);
         if (loggedAcc.getProfiles().size() >= loggedAcc.getPlan().getProfileNum())
             throw new ProfileLimitationOverflowException();
@@ -136,7 +138,7 @@ public class StreamingClass implements Streaming {
     public void selectProfile(String name) throws NullProfileException, NullLoggedAccountException {
         if (loggedAcc == null)
             throw new NullLoggedAccountException();
-        if (loggedAcc.getProfiles().get(name) == null)
+        if (loggedAcc.searchProfileByName(name) == null)
             throw new NullProfileException();
         loggedAcc.logProfile(name);
     }
@@ -162,9 +164,9 @@ public class StreamingClass implements Streaming {
             throw new NullLoggedProfileException();
         if(this.media.get(media)==null)
             throw new NullMediaException();
-        if(!loggedAcc.getCurrentProfile().getWatched().containsKey(media))
+        if(loggedAcc.getCurrentProfile().getWatchedMediaByName(media)==null)
             throw new NullWatchedMediaException();
-        if(loggedAcc.getCurrentProfile().getRated().containsKey(media))
+        if(loggedAcc.getCurrentProfile().getRatedMediaByName(media)!=null)
             throw new DuplicateRatedMediaException();
         loggedAcc.rate(media,rating);
     }
@@ -213,24 +215,15 @@ public class StreamingClass implements Streaming {
 
     @Override
     public Iterator<Rated> searchByRating(int rating) throws NullLoggedAccountException,NullLoggedProfileException, MediaIterationException {
-        Rated current;
-        Profile currentProfile;
-        Iterator<Rated> ratedItera;
-        Iterator<Profile> profileItera;
         if(loggedAcc==null)
             throw new NullLoggedAccountException();
         if(loggedAcc.getCurrentProfile()==null)
             throw new NullLoggedProfileException();
-        LinkedHashMap<String,Rated> firstStack=new LinkedHashMap<>();
+        Map<String,Rated> firstStack=new HashMap<>();
         TreeSet<Rated> finalStack=new TreeSet<>(new CompareByRating());
-        Iterator<Account> accountItera=accountMap.values().iterator();
-        while(accountItera.hasNext()){
-            profileItera=accountItera.next().getProfiles().values().iterator();
-            while(profileItera.hasNext()){
-                currentProfile=profileItera.next();
-                ratedItera=currentProfile.getRated().values().iterator();
-                while(ratedItera.hasNext()){
-                    current=ratedItera.next();
+        for(Account account: accountMap.values()){
+           for(Profile profile: account.getProfiles()){
+               for(Rated current: profile.getRated()){
                     if(!(loggedAcc.getCurrentProfile() instanceof KidProfile)||(loggedAcc.getCurrentProfile() instanceof KidProfile && (current.getAgeRating()<=((KidProfile) loggedAcc.getCurrentProfile()).getAgeRating()))) {
                         if (firstStack.containsKey(current.toString()))
                             firstStack.get(current.toString()).addRating((int)current.getRating());
@@ -245,9 +238,7 @@ public class StreamingClass implements Streaming {
                 }
             }
         }
-        ratedItera=firstStack.values().iterator();
-        while(ratedItera.hasNext()){
-            current=ratedItera.next();
+        for(Rated current: firstStack.values()){
             if(current.getRating()>=rating)
                 finalStack.add(current);
         }

@@ -1,11 +1,11 @@
 package Media;
 
-import java.util.Set;
+import java.util.LinkedList;
 
 public class ShowClass extends AbsMedia implements Show {
     private int numSeasons, numEpisodes;
 
-    public ShowClass(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, Set<String> cast) {
+    public ShowClass(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, LinkedList<String> cast) {
         super(name, directorName, ageRating, debutDate, genre, cast);
         this.numSeasons = numSeasons;
         this.numEpisodes = numEpisodes;

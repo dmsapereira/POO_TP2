@@ -45,7 +45,7 @@ public interface Streaming {
      * @param genre        <code>Movie</code>'s genre
      * @param cast         <code>Movie</code>'s cast, in form of a <code>Set</code> containing <code>String</code>s
      */
-    void uploadMovie(String name, String directorName, int duration, int ageRating, int debutDate, String genre, Set<String> cast);
+    void uploadMovie(String name, String directorName, int duration, int ageRating, int debutDate, String genre, LinkedList<String> cast);
 
     /**
      * Uploads a new <code>Show</code>
@@ -59,7 +59,7 @@ public interface Streaming {
      * @param genre        <code>Show</code>'s genre
      * @param cast         <code>Show</code>'s cast, in form of a <code>Set</code> containing <code>String</code>s
      */
-    void uploadShow(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, Set<String> cast);
+    void uploadShow(String name, String directorName, int numSeasons, int numEpisodes, int ageRating, int debutDate, String genre, LinkedList<String> cast);
 
     /**
      * Disconnects the current <code>Account</code>, leaving the <code>Device</code> active

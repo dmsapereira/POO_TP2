@@ -1,4 +1,5 @@
 package Media;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
 
@@ -6,10 +7,10 @@ import java.util.Set;
 public class AbsMedia implements Media,Comparable<Media> {
     private String name,directorName,genre;
     private int ageRating,debutDate;
-    private Set<String> cast;//A Set has been used for it's ease of Iteration and preservation of insertion order (we use a LinkedHashSet)
+    private LinkedList<String> cast;//A List has been used for it's ease of Iteration and preservation of insertion order (we use a LinkedHashSet)
 
 
-    public AbsMedia(String name, String directorName, int ageRating, int debutDate, String genre, Set<String> cast ){
+    public AbsMedia(String name, String directorName, int ageRating, int debutDate, String genre, LinkedList<String> cast ){
         this.name=name;
         this.directorName=directorName;
         this.ageRating=ageRating;
@@ -41,7 +42,7 @@ public class AbsMedia implements Media,Comparable<Media> {
     }
 
     @Override
-    public Set<String> getCast() {
+    public LinkedList<String> getCast() {
         return cast;
     }
 

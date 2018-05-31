@@ -1,4 +1,5 @@
 package Media;
+import java.util.LinkedList;
 import java.util.Set;
 
 /**
@@ -31,9 +32,9 @@ public interface Media {
     String getGenre();
 
     /**
-     * Returns a set containing the cast
-     * @return <code>Set</code> containing the cast
+     * Returns a <code>List</code> containing the cast
+     * @return <code>List</code> containing the cast
      */
-    Set<String> getCast();
+    LinkedList<String> getCast();
 
 }
